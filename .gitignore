@@ -1,0 +1,8 @@
+Executable/
+*.vs
+*.exe
+*sln
+*.vcxproj*
+bin/
+build/
+Thirdparty/autodesk/
