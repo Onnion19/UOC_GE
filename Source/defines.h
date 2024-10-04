@@ -20,7 +20,7 @@ using DirectX::XMVECTOR;
 
 #define LENGTH(a,b) sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z))
 
-enum TCameraControllerType
+enum class TCameraControllerType
 { 
 	FPS_CAMERA_CONTROLLER=0,
 	SPHERICAL_CAMERA_CONTROLLER
