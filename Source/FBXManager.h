@@ -2,25 +2,28 @@
 #define _FBXMANAGER_H
 
 #include <fbxsdk.h>
-#include <string>
 #include "defines.h"
 #include <vector>
+#include <memory>
+#include <string_view>
 
 #define FBXSDK_NEW_API
 
 class CEffect;
 class CFBXStaticMesh;
 
-class CFBXManager
+class CFBXManager final
 {
 private:
-	std::vector<CFBXStaticMesh *>				m_StaticMeshes;
-	FbxManager				*m_Manager;
-	void ImportNode(FbxNode *Node);
+	static constexpr auto fbxManagerDtor = [](FbxManager* manager) {manager->Destroy(); };
+
+	std::vector<std::unique_ptr<CFBXStaticMesh>>			m_StaticMeshes;
+	std::unique_ptr<FbxManager, decltype(fbxManagerDtor)>	m_Manager;
+	void ImportNode(FbxNode* Node);
 public:
 	CFBXManager();
-	virtual ~CFBXManager();
-	void Load(const std::string &Filename);
+	~CFBXManager() = default;
+	void Load(std::string_view Filename);
 };
 
 #endif
