@@ -23,7 +23,7 @@ void CFBXManager::Load(std::string_view Filename)
 	l_FbxImporter=FbxImporter::Create(m_Manager.get(), Filename.data());
 	l_FbxImporter->Initialize(Filename.data(), -1, m_Manager->GetIOSettings());
 	//NOTA : Creamos una escena de tipo FbxScene y la importamos
-	FbxScene *l_FbxScene=FbxScene::Create(m_Manager.get(), "tempName");
+	FbxScene *l_FbxScene=FbxScene::Create(m_Manager.get(), Filename.data());
 	l_FbxImporter->Import(l_FbxScene);
 	//NOTA : Una vez importada la escena FBX importamos el nodo Root utilizando el método ImportNode
 	FbxNode *l_RootNode=l_FbxScene->GetRootNode();
