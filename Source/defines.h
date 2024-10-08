@@ -26,7 +26,7 @@ enum class TCameraControllerType
 	SPHERICAL_CAMERA_CONTROLLER
 };
 
-void GetFilename(const char *path, std::string *filename);
+void GetFilename(const char *path, std::string& filename);
 
 #define DEG2RAD(x) x*DirectX::XM_PI/180.0f
 #define RAD2DEG(x) x*180.0f/DirectX::XM_PI
