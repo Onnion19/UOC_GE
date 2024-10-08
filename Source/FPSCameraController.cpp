@@ -1,18 +1,13 @@
 #include "FPSCameraController.h"
 #include "Camera.h"
+#include <cmath>
 
 CFPSCameraController::CFPSCameraController()
-//TO DO : Inicializa la variable miembro m_YawSpeed a 100.0f
-//TO DO : Inicializa la variable miembro m_PitchSpeed a 60.0f
-//TO DO : Inicializa la variable miembro m_Speed a 5.0f
-//TO DO : Inicializa la variable miembro m_FastSpeed a 10.0f
-//TO DO : Inicializa la variable miembro m_Position a 0, 2, 0
 {
+	m_Position = { 0,2,0 };
 }
 
-CFPSCameraController::~CFPSCameraController()
-{	
-}
+
 
 void CFPSCameraController::Move(float Strafe, float Forward, bool Speed, float ElapsedTime)
 {
@@ -27,25 +22,33 @@ void CFPSCameraController::Move(float Strafe, float Forward, bool Speed, float E
 
 void CFPSCameraController::AddYaw(float Radians)
 {
-	//TO DO : Llama al método AddYaw de la clase base CCameraController pasándole el ángulo -Radians multiplicado por la variable m_YawSpeed
+	AddYaw(Radians * m_YawSpeed);
 }
 
 void CFPSCameraController::AddPitch(float Radians)
 {
-	//TO DO : Llama al método AddPitch de la clase base CCameraController pasándole el ángulo Radians multiplicado por la variable m_PitchSpeed
+	AddPitch(Radians * m_PitchSpeed);
 }
 
-void CFPSCameraController::SetCamera(CCamera *Camera) const
+void CFPSCameraController::SetCamera(CCamera* Camera) const
 {
-	//TO DO : Establecer el FOV de la cámara utilizando el método SetFOV a 50 grados en radianes utilizando la macro DEG2RAD
-	//TO DO : Establecer el AspectRatio de la cámara utilizando el método SetAspectRatio a 16.0f/9.0f
-	//TO DO : Establecer la posición de la cámara utilizando el método SetPosition
-	//TO DO : Establecer el LookAt de la cámara utilizando el método SetLookAt, el lookat será la posición más la dirección de nuestro controlador
-	//TO DO : Establecer el vector Up de la cámara utilizando el método SetUp, le pasaremos el vector Up de nuestro controlador utilizando nuestro método GetUp
-	//TO DO : Llamar al método SetMatrixs de la cámara
+	Camera->SetFOV(DEG2RAD(50.f));
+	Camera->SetAspectRatio(16.f / 9.f);
+	{
+		const auto x = Camera->GetPosition().x + m_Position.x;
+		const auto y = Camera->GetPosition().y + m_Position.y;
+		const auto z = Camera->GetPosition().z + m_Position.z;
+		Camera->SetLookAt({ x,y,z });
+	}
+	Camera->SetUp(GetUp());
+	Camera->SetMatrixs();
 }
 
 XMFLOAT3 CFPSCameraController::GetDirection() const
 {
-	//TO DO : Devuelve la dirección del controlador de cámara utilizando lós ángulos m_Yaw y m_Pitch
+	return {
+		std::cos(m_Pitch) * std::sin(m_Yaw),
+		std::sin(m_Pitch),
+		std::cos(m_Pitch) * std::cos(m_Yaw)
+	};
 }
