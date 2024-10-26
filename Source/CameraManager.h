@@ -36,7 +36,7 @@ public:
 	void ChangeControl() {m_CameraControllerControl=m_CameraControllerVision;}
 	bool SphereVisible(const XMFLOAT3 &p, float radius) const;
 	bool BoxVisible(const XMFLOAT3 &max, const XMFLOAT3 &min) const;
-	void Load(const std::string &Filename);
+	void Load(std::string_view Filename);
 	const CCamera & GetCamera() const {return m_Camera;}
 	void Update(float ElapsedTime);
 };

@@ -122,7 +122,8 @@ void CCameraManager::CreatePlayerDefaultCamera()
 }
 
 
-void CCameraManager::Load(const std::string& Filename)
+void CCameraManager::Load(std::string_view Filename)
 {
-	//TO DO : Parsea el fichero xml Filename utilizando el método xmlParseFile
+	std::string file{ Filename };
+	xmlParseFile(std::move(file));
 }

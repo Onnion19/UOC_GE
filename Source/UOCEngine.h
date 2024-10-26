@@ -3,6 +3,7 @@
 
 #include <D3D11.h>
 #include "defines.h"
+#include <memory>
 
 class CRenderManager;
 class CEffectManager;
@@ -16,38 +17,38 @@ class CTextureManager;
 class CUOCEngine
 {
 private:
-	static CUOCEngine			*m_UOCEngine;
-	CRenderManager				*m_RenderManager;
+	static CUOCEngine* m_UOCEngine;
+	std::unique_ptr<CRenderManager>m_RenderManager;
 	bool						m_DrawAntTweakBar;
-	CEffectManager 				*m_EffectManager;
-	CInputManager				*m_InputManager;
-	CCameraManager				*m_CameraManager;
+	std::unique_ptr<CEffectManager >m_EffectManager;
+	std::unique_ptr<CInputManager>m_InputManager;
+	std::unique_ptr<CCameraManager>m_CameraManager;
 	DWORD 						m_PreviousTime;
 	float						m_ElapsedTime;
-	CDebugRender				*m_DebugRender;
-	CFBXManager					*m_FBXManager;
-	CRenderableObjectManager	*m_RenderableObjectManager;
-	CTextureManager				*m_TextureManager;
+	std::unique_ptr<CDebugRender>m_DebugRender;
+	std::unique_ptr<CFBXManager	>m_FBXManager;
+	std::unique_ptr<CRenderableObjectManager> m_RenderableObjectManager;
+	std::unique_ptr<CTextureManager>m_TextureManager;
 
-	CUOCEngine();
+	CUOCEngine() = default;
 
 public:
 	~CUOCEngine();
 
-	static CUOCEngine * GetEngine();
+	static CUOCEngine* GetEngine();
 	void Init(HWND hWnd, int Width, int Height);
 	void Destroy();
 	void Update();
 	void Render();
 
-	CRenderManager * GetRenderManager() { return m_RenderManager; }
-	CEffectManager * GetEffectManager() const { return m_EffectManager; }
-	CInputManager * GetInputManager() const { return m_InputManager; }
-	CCameraManager * GetCameraManager() const { return m_CameraManager; }
-	CDebugRender * GetDebugRender() const { return m_DebugRender; }
-	CFBXManager	* GetFBXManager() const { return m_FBXManager; }
-	CRenderableObjectManager * GetRenderableObjectManager() const { return m_RenderableObjectManager; }
-	CTextureManager * GetTextureManager() const { return m_TextureManager; }
+	CRenderManager* GetRenderManager();
+	CEffectManager* GetEffectManager() const;
+	CInputManager* GetInputManager() const;
+	CCameraManager* GetCameraManager() const ;
+	CDebugRender* GetDebugRender() const;
+	CFBXManager* GetFBXManager() const;
+	CRenderableObjectManager* GetRenderableObjectManager() const;
+	CTextureManager* GetTextureManager() const;
 	float GetElapsedTime() const { return m_ElapsedTime; }
 };
 
