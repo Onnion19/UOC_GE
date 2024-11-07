@@ -11,13 +11,30 @@ CFPSCameraController::CFPSCameraController()
 
 void CFPSCameraController::Move(float Strafe, float Forward, bool Speed, float ElapsedTime)
 {
-	//TO DO : Calculamos el vector dirección Forward del controlador de cámara utilizando el ángulo m_Yaw
-	//TO DO : Calculamos el vector dirección Right del controlador de cámara utilizando el ángulo m_Yaw+DEG2RAD(90.0f)
-	//TO DO : Calculamos el vector de movimiento sumando el vector Forward multiplicado por el parámetro Forward y le sumamos el vector Right multiplicado por el parámetro Strafe
-	//TO DO : Normalizamos el vector utilizando la función de DirectX XMVector3Normalize
+
+	XMFLOAT3 forwardVec{ cosf(m_Yaw), 0.0f,  sinf(m_Yaw) };
+	XMVECTOR forward = XMLoadFloat3(&forwardVec);
+
+	float yawRight = m_Yaw + DEG2RAD(90.0f);
+	XMFLOAT3 rightVec{ cosf(yawRight), 0.0f,sinf(yawRight) };
+	XMVECTOR right = XMLoadFloat3(&rightVec);
+
+	XMVECTOR movement = DirectX::XMVectorAdd(
+		DirectX::XMVectorScale(forward, Forward),
+		DirectX::XMVectorScale(right, Strafe)
+	);
+
+	movement = DirectX::XMVector3Normalize(movement);
+
 	//TO DO : Calculamos el movimiento multiplicando el vector normalizado por la variable de velocidad m_Speed y por el ElapsedTime
 	//TO DO : En caso de que el parámetro Speed sea verdadero multiplicamos el movimiento también por la variable FastSpeed
-	//TO DO : Establecemos la posición en m_Position asignándole la posición actual más el movimiento calculado
+	float speedMultiplier = Speed ? m_FastSpeed : m_Speed; // Not sure about this
+	movement = DirectX::XMVectorScale(movement, speedMultiplier * ElapsedTime);
+
+	XMVECTOR currentPosition = XMLoadFloat3(&m_Position);
+	XMVECTOR newPosition = DirectX::XMVectorAdd(currentPosition, movement);
+	XMStoreFloat3(&m_Position, newPosition);
+
 }
 
 void CFPSCameraController::AddYaw(float Radians)
