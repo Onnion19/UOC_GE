@@ -8,16 +8,16 @@ class CFPSCameraController;
 class CPlayer 
 {
 private:
-	XMFLOAT3				m_Position;
-	float					m_Speed;
-	float					m_FastSpeed;
-	float					m_VerticalSpeed;
-	float					m_VerticalSpeedJump;
+	XMFLOAT3				m_Position{ 0.0f, 1.75f, 0.0f };
+	float					m_Speed = 10.f;
+	float					m_FastSpeed = 20.f;
+	float					m_VerticalSpeed = 0.0f;
+	float					m_VerticalSpeedJump = 8.f;
 
 	CFPSCameraController	*m_FPSCameraController;
 public:
 	CPlayer();
-	virtual ~CPlayer();
+	virtual ~CPlayer() = default;
 	
 	void Update(float ElapsedTime);
 	void Move(float Strafe, float Forward, bool Fast, float ElapsedTime);
