@@ -12,11 +12,11 @@ class CCameraController
 protected:
 	XMFLOAT3 					m_Position;
 
-	float						m_Yaw;
-	float						m_Pitch;
+	float						m_Yaw = 0.f;
+	float						m_Pitch = 0.f;
 public:
-	CCameraController();
-	virtual ~CCameraController();
+	CCameraController() = default;
+	virtual ~CCameraController() = default;
 	virtual void SetCamera(CCamera *Camera) const = 0;
 	virtual void AddYaw(float Radians);
 	virtual void AddPitch(float Radians);
