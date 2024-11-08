@@ -10,6 +10,10 @@ CFBXStaticMesh::CFBXStaticMesh() : m_Effect(nullptr)
 {
 }
 
+CFBXStaticMesh::~CFBXStaticMesh()
+{
+}
+
 bool CFBXStaticMesh::Generate(FbxNode* Node, FbxMesh* Mesh)
 {
 	CUOCEngine* l_Engine = CUOCEngine::GetEngine();
@@ -150,9 +154,9 @@ bool CFBXStaticMesh::Generate(FbxNode* Node, FbxMesh* Mesh)
 
 void CFBXStaticMesh::Render(ID3D11DeviceContext* DeviceContext)
 {
-	////TO DO : Recorrer el vector m_RenderableVertexs
 	for (auto i = 0u; i < m_RenderableVertexs.size(); i++)
 	{
+		if (!m_Textures[i] || !m_RenderableVertexs[i]) continue;
 		m_Textures[i]->Activate(DeviceContext, 0);
 		m_RenderableVertexs[i]->DrawIndexed(DeviceContext, m_Effect);
 	}

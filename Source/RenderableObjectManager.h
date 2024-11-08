@@ -4,16 +4,15 @@
 #include <vector>
 #include <d3d11.h>
 #include <memory>
-
-class CRenderableObject;
+#include "RenderableObject.h"
 
 class CRenderableObjectManager
 {
 protected:
 	std::vector<std::unique_ptr<CRenderableObject>> m_RenderableObjects;
 public:
-	CRenderableObjectManager();
-	virtual ~CRenderableObjectManager();
+	CRenderableObjectManager() = default;
+	virtual ~CRenderableObjectManager() = default;
 	void Update(float ElapsedTime);
 	void Render(ID3D11DeviceContext *DeviceContext);
 	void AddRenderableObject(std::unique_ptr<CRenderableObject>&& RenderableObject);

@@ -57,9 +57,11 @@ CTexture* CTextureManager::LoadTexture(ID3D11Device* Device, const std::string& 
 	texturePath.append(name);
 
 
-	auto& texture = m_TextureMap[texturePath];
-	texture = std::make_unique<CTexture>();
-	texture->Load(Device, texturePath);
+	auto tuple = m_TextureMap.emplace(texturePath, new CTexture());
+	
+	if (!tuple.second) return nullptr;
 
-	return texture.get();
+	CTexture* texture = tuple.first->second.get();
+	texture->Load(Device, texturePath);
+	return texture;
 }

@@ -1,10 +1,11 @@
 #ifndef _APPLICATION_DX_H
 #define _APPLICATION_DX_H
 
+
 #include "defines.h"
 #include <memory>
+#include "Player.h"
 
-class CPlayer;
 
 class CApplicationDX
 {
@@ -18,7 +19,7 @@ public:
 	void Init(HWND hWnd, int Width, int Height);
 	void Update();
 	void Render();
-	CPlayer* GetPlayer() const { return m_Player.get(); }
+	CPlayer* GetPlayer() const;
 };
 
 #endif

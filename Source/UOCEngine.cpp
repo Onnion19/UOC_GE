@@ -35,7 +35,7 @@ void CUOCEngine::Init(HWND hWnd, int Width, int Height)
 
 	m_DebugRender = std::make_unique<CDebugRender>(m_RenderManager->GetDevice());
 	m_CameraManager = std::make_unique<CCameraManager>();
-	m_CameraManager->Load("./DATA/XML/cameras.xml");
+	m_CameraManager->Load("DATA/XML/cameras.xml");
 
 
 	m_FBXManager = std::make_unique<CFBXManager>();
@@ -66,8 +66,8 @@ void CUOCEngine::Update()
 		m_CameraManager->ChangeControl();
 	}
 
-	m_CameraManager->Update(delta_sec);
-	m_RenderableObjectManager->Update(delta_sec);
+	m_CameraManager->Update(static_cast<float>(delta_sec));
+	m_RenderableObjectManager->Update(static_cast<float>(delta_sec));
 }
 
 void CUOCEngine::Render()

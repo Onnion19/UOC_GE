@@ -16,7 +16,7 @@ protected:
 	float						m_Pitch = 0.f;
 public:
 	CCameraController() = default;
-	virtual ~CCameraController() = default;
+	virtual ~CCameraController();
 	virtual void SetCamera(CCamera *Camera) const = 0;
 	virtual void AddYaw(float Radians);
 	virtual void AddPitch(float Radians);

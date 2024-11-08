@@ -39,12 +39,12 @@ void CFPSCameraController::Move(float Strafe, float Forward, bool Speed, float E
 
 void CFPSCameraController::AddYaw(float Radians)
 {
-	AddYaw(Radians * m_YawSpeed);
+	CCameraController::AddYaw(Radians * m_YawSpeed);
 }
 
 void CFPSCameraController::AddPitch(float Radians)
 {
-	AddPitch(Radians * m_PitchSpeed);
+	CCameraController::AddPitch(Radians * m_PitchSpeed);
 }
 
 void CFPSCameraController::SetCamera(CCamera* Camera) const

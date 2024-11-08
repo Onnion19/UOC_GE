@@ -16,6 +16,10 @@ XMFLOAT3 CCameraController::GetUp() const
 	};
 }
 
+CCameraController::~CCameraController()
+{
+}
+
 void CCameraController::AddYaw(float Radians)
 {
 	static constexpr float circle = DEG2RAD(360);

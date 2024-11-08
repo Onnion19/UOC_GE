@@ -10,6 +10,7 @@
 CCameraManager::CCameraManager()
 {
 	m_Frustum = std::make_unique<CFrustum>();
+	CreatePlayerDefaultCamera();
 }
 
 
@@ -77,7 +78,7 @@ void CCameraManager::onStartElement(const std::string& elem, MKeyValue& atts)
 	else
 	{
 		// Wrong camera on start element
-		assert(false);
+		//assert(false);
 	}
 }
 

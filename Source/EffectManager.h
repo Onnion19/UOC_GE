@@ -44,12 +44,12 @@ public:
 };
 
 template <class T>
-class CEffectTemplated : CEffect
+class CEffectTemplated : public CEffect
 {
 private:
-	std::unique_ptr<ID3D11VertexShader> m_VertexShader;
-	std::unique_ptr<ID3D11PixelShader> m_PixelShader;
-	std::unique_ptr<ID3D11InputLayout> m_VertexLayout;
+	ID3D11VertexShader* m_VertexShader = nullptr;
+	ID3D11PixelShader* m_PixelShader = nullptr;
+	ID3D11InputLayout* m_VertexLayout = nullptr;
 	std::string m_Filename;
 	std::string m_PointEntryVS;
 	std::string m_ShaderModelVS;
@@ -58,24 +58,23 @@ private:
 
 	bool LoadShader(const std::string& Filename, const std::string& EntryPoint, const std::string& ShaderModel, ID3DBlob** BlobOut);
 public:
-	CEffectTemplated();
+	CEffectTemplated() = default;
 	virtual ~CEffectTemplated();
 	void CleanUp();
 	bool Reload(ID3D11Device* Device);
-	bool Load(ID3D11Device* Device, const std::string& Filename, const std::string& PointEntryVS, const std::string& ShaderModelVS, const std::string& PointEntryPS, const std::string& ShaderModelPS);
-	ID3D11VertexShader* GetVertexShader()
+	bool Load(ID3D11Device* Device, const std::string& Filename, const std::string& PointEntryVS, const std::string& ShaderModelVS, const std::string& PointEntryPS, const std::string& ShaderModelPS) override;
+	ID3D11VertexShader* GetVertexShader() override
 	{
 		return m_VertexShader;
 	}
-	ID3D11PixelShader* GetPixelShader()
+	ID3D11PixelShader* GetPixelShader() override
 	{
 		return m_PixelShader;
 	}
-	ID3D11InputLayout* GetVertexLayout()
+	ID3D11InputLayout* GetVertexLayout() override
 	{
 		return m_VertexLayout;
 	}
-	bool Reload();
 };
 
 class CEffectManager final
@@ -101,7 +100,7 @@ public:
 	static CAnimatedModelConstantBufferParameters	m_AnimatedModelConstantBufferParameters;
 
 	CEffectManager();
-	~CEffectManager() = default;
+	~CEffectManager();
 	CEffect* GetEffect(unsigned int VertexType);
 	CEffect* GetEffect(const std::string& Name);
 	void SetSceneConstantBuffer(ID3D11DeviceContext* DeviceContext);
@@ -111,18 +110,24 @@ public:
 
 
 template<class T>
+inline CEffectTemplated<T>::~CEffectTemplated()
+{
+	CleanUp();
+}
+
+template<class T>
 void CEffectTemplated<T>::CleanUp()
 {
-	m_VertexShader.reset();
-	m_PixelShader.reset();
-	m_VertexLayout.reset();
+	CHECKED_DELETE(m_VertexShader);
+	CHECKED_DELETE(m_PixelShader);
+	CHECKED_DELETE(m_VertexLayout);
 }
 
 template<class T>
 bool CEffectTemplated<T>::Reload(ID3D11Device* Device)
 {
 	CleanUp();
-	Load();
+	return Load(Device, m_Filename, m_PointEntryVS, m_ShaderModelVS, m_PointEntryPS, m_ShaderModelPS);
 }
 
 template<class T>
@@ -200,16 +205,16 @@ void CEffectManager::AddEffect(ID3D11Device* Device, const std::string& Filename
 {
 
 	auto type = T::GetVertexType();
-	auto effect = std::make_unique< CEffectTemplated<T>>();
-	effect->Load(Device, FileName, PointEntryVS, ShaderModelVS, PointEntryPS, ShaderModelPS);
+	std::unique_ptr<CEffect> effect{ new CEffectTemplated<T>() };
+	effect->Load(Device, Filename, PointEntryVS, ShaderModelVS, PointEntryPS, ShaderModelPS);
 	m_EffectsByVertexType[type] = std::move(effect);
 }
 
 template<class T>
 void CEffectManager::AddEffect(ID3D11Device* Device, const std::string& Name, const std::string& Filename, const std::string& PointEntryVS, const std::string& ShaderModelVS, const std::string& PointEntryPS, const std::string& ShaderModelPS)
 {
-	auto effect = std::make_unique< CEffectTemplated<T>>();
-	effect->Load(Device, FileName, PointEntryVS, ShaderModelVS, PointEntryPS, ShaderModelPS);
+	std::unique_ptr<CEffect> effect{ new CEffectTemplated<T>() };
+	effect->Load(Device, Filename, PointEntryVS, ShaderModelVS, PointEntryPS, ShaderModelPS);
 	m_Effects[Name] = std::move(effect);
 }
 

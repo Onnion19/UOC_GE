@@ -8,6 +8,7 @@
 #include <DirectXMath.h>
 #include "defines.h"
 #include <fbxsdk.h>
+#include <memory>
 
 class CTexture;
 class CRenderableVertexs;

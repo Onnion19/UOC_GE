@@ -22,9 +22,16 @@ CEffectManager::CEffectManager()
 	AddEffect<UOC_POSITION_COLOR_TEXTURE_VERTEX>(device, "./Data/Effects/UOC_POSITION_COLOR_TEXTURE_VERTEXShader.fx", "VS", "vs_4_0", "PS", "ps_4_0");
 
 	//Not sure about that constat buffer size
-	CreateConstantBuffer(device, 0, &m_SceneConstantBuffer);
-	CreateConstantBuffer(device, 0, &m_ObjectConstantBuffer);
-	CreateConstantBuffer(device, 0, &m_AnimatedModelConstantBuffer);
+	CreateConstantBuffer(device, sizeof(CSceneConstantBufferParameters), &m_SceneConstantBuffer);
+	CreateConstantBuffer(device, sizeof(CObjectConstantBufferParameters), &m_ObjectConstantBuffer);
+	CreateConstantBuffer(device, sizeof(CAnimatedModelConstantBufferParameters), &m_AnimatedModelConstantBuffer);
+}
+
+CEffectManager::~CEffectManager()
+{
+	CHECKED_DELETE(m_SceneConstantBuffer);
+	CHECKED_DELETE(m_ObjectConstantBuffer);
+	CHECKED_DELETE(m_AnimatedModelConstantBuffer);
 }
 
 bool CEffectManager::CreateConstantBuffer(ID3D11Device* Device, UINT ConstantBufferSize, ID3D11Buffer** ConstantBuffer)

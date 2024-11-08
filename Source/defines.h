@@ -1,6 +1,7 @@
 #ifndef __DEFINES_H
 #define __DEFINES_H
 
+
 #include <string>
 
 #include <d3d11.h>
@@ -11,7 +12,6 @@ using DirectX::XMFLOAT3;
 using DirectX::XMFLOAT4;
 using DirectX::XMMATRIX;
 using DirectX::XMVECTOR;
-
 #define PATH_WORLD			".\\Data\\Models\\World\\"
 #define PATH_TEXTURES		".\\Data\\Models\\Textures\\"
 

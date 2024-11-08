@@ -8,9 +8,10 @@
 #include "XMLParser.h"
 #include "defines.h"
 #include "Camera.h"
+#include "Frustum.h"
+#include "CameraController.h"
 #include <memory>
 
-class CFrustum;
 class CCameraController;
 
 class  CCameraManager final: public CXMLParser 
@@ -25,7 +26,7 @@ private:
 	void onStartElement(const std::string &elem, MKeyValue &atts);
 	void UpdateFrustumCamera();
 	void CreatePlayerDefaultCamera();
-	void SetCamera(std::string_view name);
+	//void SetCamera(std::string_view name);
 public:
 	CCameraManager();
 	~CCameraManager() = default;

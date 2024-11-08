@@ -11,7 +11,7 @@ protected:
 	XMFLOAT3					m_Scale{ 0,0,0 };
 public:
 	CRenderableObject() = default;
-	virtual ~CRenderableObject() = default;
+	virtual ~CRenderableObject();
 	virtual void Update(float ElapsedTime);
 	virtual void Render(ID3D11DeviceContext* DeviceContext);
 	virtual XMMATRIX GetTransform();

@@ -13,7 +13,6 @@
 #include "UOCEngine.h"
 #include "RenderManager.h"
 
-
 CApplicationDX::~CApplicationDX()
 {
 	auto engine = CUOCEngine::GetEngine();
@@ -31,6 +30,11 @@ void CApplicationDX::Init(HWND hWnd, int Width, int Height)
 void CApplicationDX::Render()
 {
 	CUOCEngine::GetEngine()->Render();
+}
+
+CPlayer* CApplicationDX::GetPlayer() const
+{
+	return m_Player.get();
 }
 
 void CApplicationDX::Update()

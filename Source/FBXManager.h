@@ -22,7 +22,7 @@ private:
 	void ImportNode(FbxNode* Node);
 public:
 	CFBXManager();
-	~CFBXManager() = default;
+	~CFBXManager();
 	void Load(std::string_view Filename);
 };
 

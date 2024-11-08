@@ -2,6 +2,10 @@
 
 
 
+CRenderableObject::~CRenderableObject()
+{
+}
+
 void CRenderableObject::Update(float)
 {
 }
