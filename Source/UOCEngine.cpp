@@ -52,8 +52,6 @@ void CUOCEngine::Update()
 
 	m_InputManager->Update();
 
-	CCameraController* l_CameraController = m_CameraManager->GetCameraController("player");
-
 	CKeyboardInput* l_KeyboardInput = m_InputManager->GetKeyboard();
 
 	if (l_KeyboardInput->KeyBecomesPressed(DIK_TAB))
@@ -85,16 +83,16 @@ void CUOCEngine::Render()
 	}
 
 
-	auto view = m_CameraManager->GetCamera().GetView();
-	auto proj = m_CameraManager->GetCamera().GetProjection();
+	const auto& view = m_CameraManager->GetCamera().GetView();
+	const auto& proj = m_CameraManager->GetCamera().GetProjection();
 
-	CEffectManager::m_SceneConstantBufferParameters.m_View = view;
-	CEffectManager::m_SceneConstantBufferParameters.m_Projection = proj;
+	CEffectManager::m_SceneConstantBufferParameters.m_View = DirectX::XMMatrixTranspose(view);
+	CEffectManager::m_SceneConstantBufferParameters.m_Projection = DirectX::XMMatrixTranspose(proj);
 
 	m_EffectManager->SetSceneConstantBuffer(l_DeviceContext);
 	m_RenderableObjectManager->Render(l_DeviceContext);
 
-	if (m_RenderManager->DrawAxisGrid())
+	if (true)
 	{
 		XMMATRIX world = DirectX::XMMatrixIdentity();
 		CEffectManager::m_ObjectConstantBufferParameters.m_World = DirectX::XMMatrixTranspose(world);
