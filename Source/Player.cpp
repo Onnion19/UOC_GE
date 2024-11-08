@@ -11,6 +11,11 @@
 #include "FPSCameraController.h"
 #include "EffectManager.h"
 
+#if !NDEBUG
+#include <iostream>
+#include <format>
+#endif
+
 CPlayer::CPlayer(void)
 {
 	m_FPSCameraController = static_cast<CFPSCameraController*>(CUOCEngine::GetEngine()->GetCameraManager()->GetCameraController("player"));
@@ -18,22 +23,24 @@ CPlayer::CPlayer(void)
 
 void CPlayer::Move(float Strafe, float Forward, bool Fast, float ElapsedTime)
 {
-	assert(m_FPSCameraController);
+	float multiplier = (Fast ? m_FastSpeed : m_Speed) * ElapsedTime;
+	XMFLOAT3 movementMultiplier(multiplier, 0, multiplier);
+	XMVECTOR movementMultiplierVec = XMLoadFloat3(&movementMultiplier);
+
 	XMFLOAT3 l_VectorMovement{ Forward, 0.f, Strafe };
 	XMVECTOR l_Vec = XMLoadFloat3(&l_VectorMovement);
 	l_Vec = DirectX::XMVector3Normalize(l_Vec);
 
+	assert(m_FPSCameraController);
+	auto direction = m_FPSCameraController->GetDirection();
+	XMVECTOR directionVec = XMLoadFloat3(&direction);
 
-	l_VectorMovement.x *= (Fast ? m_FastSpeed : m_Speed);
-	l_VectorMovement.z *= (Fast ? m_FastSpeed : m_Speed);
+	XMVECTOR movementVec = DirectX::XMVectorMultiply(l_Vec, movementMultiplierVec);
+	movementVec = DirectX::XMVectorMultiply(movementVec, directionVec);
 
-
-	auto yaw = m_FPSCameraController->GetYaw();
-
+	XMStoreFloat3(&l_VectorMovement, movementVec);
 
 	m_VerticalSpeed += -9.81f * ElapsedTime;
-
-
 	l_VectorMovement.y = m_VerticalSpeed * ElapsedTime;
 
 

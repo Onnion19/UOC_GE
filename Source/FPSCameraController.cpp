@@ -2,6 +2,11 @@
 #include "Camera.h"
 #include <cmath>
 
+#if !NDEBUG
+#include <iostream>
+#include <format>
+#endif
+
 CFPSCameraController::CFPSCameraController()
 {
 	m_Position = { 0,2,0 };
@@ -50,22 +55,24 @@ void CFPSCameraController::AddPitch(float Radians)
 void CFPSCameraController::SetCamera(CCamera* Camera) const
 {
 	Camera->SetFOV(DEG2RAD(50.f));
-	Camera->SetAspectRatio(16.f / 9.f);
-	{
-		const auto x = Camera->GetPosition().x + m_Position.x;
-		const auto y = Camera->GetPosition().y + m_Position.y;
-		const auto z = Camera->GetPosition().z + m_Position.z;
-		Camera->SetLookAt({ x,y,z });
-	}
+	Camera->SetAspectRatio(16.f / 9.f);	
+
+	auto direction = GetDirection();
+	XMVECTOR directionVec = XMLoadFloat3(& direction );
+	XMVECTOR positionVec = XMLoadFloat3(& m_Position );
+	XMFLOAT3 lookAt{};
+	auto lookAtVec = DirectX::XMVectorAdd(positionVec, directionVec);
+	XMStoreFloat3(&lookAt, lookAtVec);
+	Camera->SetLookAt(lookAt);
+	Camera->SetPosition(m_Position);
 	Camera->SetUp(GetUp());
 	Camera->SetMatrixs();
 }
 
 XMFLOAT3 CFPSCameraController::GetDirection() const
 {
-	return {
-		std::cos(m_Pitch) * std::sin(m_Yaw),
-		std::sin(m_Pitch),
-		std::cos(m_Pitch) * std::cos(m_Yaw)
+	XMFLOAT3 direction = 	 {
+		cos(m_Yaw), sin(m_Pitch),sin(m_Yaw)
 	};
+	return direction;
 }

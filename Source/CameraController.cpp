@@ -1,5 +1,7 @@
 #include "CameraController.h"
 #include <algorithm>
+#include <iostream>
+#include <format>
 
 XMFLOAT3 CCameraController::GetRight() const
 {
@@ -9,11 +11,13 @@ XMFLOAT3 CCameraController::GetRight() const
 
 XMFLOAT3 CCameraController::GetUp() const
 {
-	return {
+	/*return {
 		-sinf(m_Yaw) * sinf(m_Pitch),
 		cosf(m_Pitch),
 		cosf(m_Yaw) * sinf(m_Pitch)
-	};
+	};*/
+
+	return { 0,1,0 };
 }
 
 CCameraController::~CCameraController()
@@ -45,4 +49,8 @@ void CCameraController::AddPitch(float Radians)
 	static constexpr float maxPitch = DEG2RAD(90);
 	m_Pitch -= Radians;
 	m_Pitch = std::clamp(m_Pitch, -maxPitch, maxPitch);
+
+#if !NDEBUG
+	std::cerr << std::format("Ptich: {}", RAD2DEG(m_Pitch)) << std::endl;
+#endif
 }

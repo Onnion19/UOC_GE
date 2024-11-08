@@ -26,7 +26,7 @@ private:
 	void onStartElement(const std::string &elem, MKeyValue &atts);
 	void UpdateFrustumCamera();
 	void CreatePlayerDefaultCamera();
-	//void SetCamera(std::string_view name);
+	void SetCamera(std::string_view name);
 public:
 	CCameraManager();
 	~CCameraManager() = default;

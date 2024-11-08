@@ -8,7 +8,7 @@ class CFPSCameraController;
 class CPlayer 
 {
 private:
-	XMFLOAT3				m_Position{ 0.0f, 1.75f, 0.0f };
+	XMFLOAT3				m_Position{ 0.0f, 1.75f, -10.0f };
 	float					m_Speed = 10.f;
 	float					m_FastSpeed = 20.f;
 	float					m_VerticalSpeed = 0.0f;
