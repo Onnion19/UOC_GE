@@ -9,7 +9,7 @@
 #include "RenderableObjectManager.h"
 #include "TextureManager.h"
 #include "VertexTypes.h"
-
+#include <ratio>
 CUOCEngine* CUOCEngine::m_UOCEngine = NULL;
 
 CUOCEngine::~CUOCEngine()
@@ -41,14 +41,14 @@ void CUOCEngine::Init(HWND hWnd, int Width, int Height)
 	m_FBXManager = std::make_unique<CFBXManager>();
 	m_RenderableObjectManager = std::make_unique<CRenderableObjectManager>();
 	m_TextureManager = std::make_unique<CTextureManager>();
-	m_PreviousTime = timeGetTime();
+	m_PreviousTimeStamp = std::chrono::steady_clock::now();
 }
 
 void CUOCEngine::Update()
 {
-	const auto currentTime = timeGetTime();
-	auto delta_sec = (currentTime - m_PreviousTime) / 1000;
-	m_PreviousTime = currentTime;
+	const auto currentTime = clock::now();
+	m_ElapsedTime = currentTime - m_PreviousTimeStamp;
+	m_PreviousTimeStamp = currentTime;
 
 	m_InputManager->Update();
 
@@ -66,8 +66,8 @@ void CUOCEngine::Update()
 		m_CameraManager->ChangeControl();
 	}
 
-	m_CameraManager->Update(static_cast<float>(delta_sec));
-	m_RenderableObjectManager->Update(static_cast<float>(delta_sec));
+	m_CameraManager->Update(m_ElapsedTime.count());
+	m_RenderableObjectManager->Update(m_ElapsedTime.count());
 }
 
 void CUOCEngine::Render()

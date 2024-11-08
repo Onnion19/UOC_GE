@@ -119,7 +119,7 @@ void CCameraManager::CreatePlayerDefaultCamera()
 {
 	m_CameraControllers.emplace("player", std::make_unique<CFPSCameraController>());
 	m_CameraControllerControl = "player";
-	m_CameraControllerVision = "plyaer";
+	m_CameraControllerVision = "player";
 }
 
 

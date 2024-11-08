@@ -4,6 +4,7 @@
 #include <D3D11.h>
 #include "defines.h"
 #include <memory>
+#include <chrono>
 
 class CRenderManager;
 class CEffectManager;
@@ -16,6 +17,7 @@ class CTextureManager;
 
 class CUOCEngine
 {
+	using clock = std::chrono::steady_clock;
 private:
 	static CUOCEngine* m_UOCEngine;
 	std::unique_ptr<CRenderManager>m_RenderManager;
@@ -23,8 +25,8 @@ private:
 	std::unique_ptr<CEffectManager >m_EffectManager;
 	std::unique_ptr<CInputManager>m_InputManager;
 	std::unique_ptr<CCameraManager>m_CameraManager;
-	DWORD 						m_PreviousTime;
-	float						m_ElapsedTime;
+	std::chrono::steady_clock::time_point m_PreviousTimeStamp;
+	std::chrono::duration<float, std::ratio<1, 1>>	m_ElapsedTime;
 	std::unique_ptr<CDebugRender>m_DebugRender;
 	std::unique_ptr<CFBXManager	>m_FBXManager;
 	std::unique_ptr<CRenderableObjectManager> m_RenderableObjectManager;
@@ -49,7 +51,7 @@ public:
 	CFBXManager* GetFBXManager() const;
 	CRenderableObjectManager* GetRenderableObjectManager() const;
 	CTextureManager* GetTextureManager() const;
-	float GetElapsedTime() const { return m_ElapsedTime; }
+	float GetElapsedTime() const { return m_ElapsedTime.count(); }
 };
 
 #endif

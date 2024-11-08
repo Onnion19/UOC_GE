@@ -25,10 +25,19 @@ void CCameraController::AddYaw(float Radians)
 	static constexpr float circle = DEG2RAD(360);
 	static constexpr float range = circle * 2;
 
-	auto newYaw = m_Yaw + Radians + circle;
-	int loops = newYaw / range;
-	newYaw -= loops * range;
-	m_Yaw = newYaw - circle;
+	m_Yaw += Radians;
+
+	if (m_Yaw < -circle)
+	{
+		m_Yaw += range;
+	}
+	else if (m_Yaw > circle)
+	{
+		m_Yaw -= range;
+	}
+#if !NDEBUG
+	std::cerr << std::format("Yaw: {}", RAD2DEG(m_Yaw)) << std::endl;
+#endif
 
 }
 void CCameraController::AddPitch(float Radians)

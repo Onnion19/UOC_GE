@@ -8,8 +8,8 @@ class CCamera;
 class CFPSCameraController : public CCameraController
 {
 private:
-	static constexpr float m_YawSpeed = 100.f;
-	static constexpr float m_PitchSpeed = 60.f;
+	static constexpr float m_YawSpeed = 10.f;
+	static constexpr float m_PitchSpeed = 6.f;
 	static constexpr float m_Speed = 5.f;
 	static constexpr float m_FastSpeed = 10.f;
 public:
