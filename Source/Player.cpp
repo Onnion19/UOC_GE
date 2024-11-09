@@ -21,25 +21,31 @@ CPlayer::CPlayer(void)
 	m_FPSCameraController = static_cast<CFPSCameraController*>(CUOCEngine::GetEngine()->GetCameraManager()->GetCameraController("player"));
 }
 
+
+
 void CPlayer::Move(float Strafe, float Forward, bool Fast, float ElapsedTime)
 {
-	float multiplier = (Fast ? m_FastSpeed : m_Speed) * ElapsedTime;
-	XMFLOAT3 movementMultiplier(multiplier, 0, multiplier);
-	XMVECTOR movementMultiplierVec = XMLoadFloat3(&movementMultiplier);
 
-	XMFLOAT3 l_VectorMovement{ Forward, 0.f, Strafe };
-	XMVECTOR l_Vec = XMLoadFloat3(&l_VectorMovement);
-	l_Vec = DirectX::XMVector3Normalize(l_Vec);
+	XMFLOAT3 l_VectorMovement{ 0.f, 0.f, 0.f };
+	if (std::abs(Strafe) + std::abs(Forward) > 0.01f)
+	{
+		float multiplier = (Fast ? m_FastSpeed : m_Speed) * ElapsedTime;
+		assert(m_FPSCameraController);
+		auto forward = m_FPSCameraController->GetDirection();
+		auto right = m_FPSCameraController->GetRight();
+		XMVECTOR forwardVec = XMLoadFloat3(&forward);
+		forwardVec = DirectX::XMVectorScale(forwardVec, Forward);
+		XMVECTOR rightVec = XMLoadFloat3(&right);
+		rightVec = DirectX::XMVectorScale(rightVec, Strafe);
 
-	assert(m_FPSCameraController);
-	auto direction = m_FPSCameraController->GetDirection();
-	XMVECTOR directionVec = XMLoadFloat3(&direction);
+		auto directionVec = DirectX::XMVectorAdd(forwardVec, rightVec);
+		directionVec = DirectX::XMVector3Normalize(directionVec);
 
-	XMVECTOR movementVec = DirectX::XMVectorMultiply(l_Vec, movementMultiplierVec);
-	movementVec = DirectX::XMVectorMultiply(movementVec, directionVec);
+		XMVECTOR movementVec = DirectX::XMVectorScale(directionVec, multiplier);
+		XMStoreFloat3(&l_VectorMovement, movementVec);
 
-	XMStoreFloat3(&l_VectorMovement, movementVec);
 
+	}
 	m_VerticalSpeed += -9.81f * ElapsedTime;
 	l_VectorMovement.y = m_VerticalSpeed * ElapsedTime;
 

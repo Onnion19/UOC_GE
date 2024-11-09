@@ -5,8 +5,16 @@
 
 XMFLOAT3 CCameraController::GetRight() const
 {
-	float yawRight = m_Yaw - DEG2RAD(90.0f);
-	return { cosf(yawRight), 0.0f, sinf(yawRight) };
+	auto forward = GetDirection();
+	auto up = GetUp();
+
+	auto forwardvec = XMLoadFloat3(&forward);
+	auto upvec = XMLoadFloat3(&up);
+
+	auto rightvec = DirectX::XMVector3Cross(forwardvec, upvec);
+	XMFLOAT3 right;
+	XMStoreFloat3(&right, rightvec);
+	return right;
 }
 
 XMFLOAT3 CCameraController::GetUp() const
