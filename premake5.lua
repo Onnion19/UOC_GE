@@ -41,6 +41,15 @@ workspace "GameEngine"
         "dxguid"}
 		libdirs { "ThirdParty/expat"}
 
+		prebuildcommands {
+			"{COPYDIR} ../../Data  ./Data"
+		}
+
+		postbuildcommands {
+			"{COPYFILE} ../../ThirdParty/expat/libexpat64.dll  ../../Executable/%{cfg.buildcfg}/",
+			"{COPYDIR} ../../Data  ../../Executable/%{cfg.buildcfg}/Data",
+			"{echo} Libs copied"
+		}
 		
 		filter "configurations:Release"
 			defines { "NDEBUG" }
