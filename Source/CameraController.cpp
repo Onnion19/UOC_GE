@@ -19,13 +19,7 @@ XMFLOAT3 CCameraController::GetRight() const
 
 XMFLOAT3 CCameraController::GetUp() const
 {
-	/*return {
-		-sinf(m_Yaw) * sinf(m_Pitch),
-		cosf(m_Pitch),
-		cosf(m_Yaw) * sinf(m_Pitch)
-	};*/
-
-	return { 0,1,0 };
+	return { 0, cos(m_Pitch),0};
 }
 
 CCameraController::~CCameraController()
