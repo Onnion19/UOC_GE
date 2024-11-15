@@ -2,6 +2,8 @@
 
 ![ScreenShot1](./Docs/Images/ScreenCapture1.png)
 
+![ScreenShot1](./Docs/Images/ScreenCapture2.png)
+
 ## Com Executar
 
 Dins de `Executable` es troben els executables compilats llestos per executar directament.  Hi ha la versió de **Debug** i **Release**.
