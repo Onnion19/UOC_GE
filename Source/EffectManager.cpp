@@ -29,9 +29,9 @@ CEffectManager::CEffectManager()
 
 CEffectManager::~CEffectManager()
 {
-	CHECKED_DELETE(m_SceneConstantBuffer);
-	CHECKED_DELETE(m_ObjectConstantBuffer);
-	CHECKED_DELETE(m_AnimatedModelConstantBuffer);
+	CHECKED_RELEASE(m_SceneConstantBuffer);
+	CHECKED_RELEASE(m_ObjectConstantBuffer);
+	CHECKED_RELEASE(m_AnimatedModelConstantBuffer);
 }
 
 bool CEffectManager::CreateConstantBuffer(ID3D11Device* Device, UINT ConstantBufferSize, ID3D11Buffer** ConstantBuffer)

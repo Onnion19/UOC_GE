@@ -21,6 +21,7 @@ public:
 	void AddYaw(float Radians);
 	void AddPitch(float Radians);
 	XMFLOAT3 GetDirection() const;
+	void Update(float delta) override;
 };
 
 #endif

@@ -29,9 +29,7 @@ public:
 	virtual XMFLOAT3 GetDirection() const {	return { 1,0,0 };}
 	const XMFLOAT3 & GetPosition() const {return m_Position;}
 	void SetPosition(const XMFLOAT3 &Position) {m_Position=Position;}
-	virtual void Update(float ElapsedTime)
-	{
-	}
+	virtual void Update(float ElapsedTime) = 0;
 };
 
 #endif

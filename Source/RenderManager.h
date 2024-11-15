@@ -17,7 +17,7 @@ private:
 	HWND						m_hWnd = nullptr;
 	std::array<float, 4>			m_BackgroundColor;
 	bool						m_PaintSolid;
-	bool						m_DrawAxisGrid;
+	bool m_DrawAxisGrid = true;
 	ID3D11RasterizerState* m_WireframeRenderState;
 	ID3D11RasterizerState* m_SolidRenderState;
 	void Init(HWND hWnd, int Width, int Height);

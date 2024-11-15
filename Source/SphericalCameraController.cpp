@@ -11,11 +11,11 @@
 
 XMFLOAT3 CSphericalCameraController::GetDirection() const
 {
-	return {
-		std::cos(m_Pitch) * std::sin(m_Yaw),
-		std::sin(m_Pitch),
-		std::cos(m_Pitch) * std::cos(m_Yaw)
+	XMFLOAT3 direction = {
+		cos(m_Yaw), sin(m_Pitch),sin(m_Yaw)
 	};
+	return direction;
+
 }
 
 void CSphericalCameraController::SetCamera(CCamera* Camera) const

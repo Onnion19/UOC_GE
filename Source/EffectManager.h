@@ -118,9 +118,9 @@ inline CEffectTemplated<T>::~CEffectTemplated()
 template<class T>
 void CEffectTemplated<T>::CleanUp()
 {
-	CHECKED_DELETE(m_VertexShader);
-	CHECKED_DELETE(m_PixelShader);
-	CHECKED_DELETE(m_VertexLayout);
+	CHECKED_RELEASE(m_VertexShader);
+	CHECKED_RELEASE(m_PixelShader);
+	CHECKED_RELEASE(m_VertexLayout);
 }
 
 template<class T>

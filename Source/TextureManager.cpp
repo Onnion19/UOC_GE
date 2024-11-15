@@ -6,8 +6,8 @@
 
 CTexture::~CTexture()
 {
-	CHECKED_DELETE(m_Texture);
-	CHECKED_DELETE(m_SamplerState);
+	CHECKED_RELEASE(m_Texture);
+	CHECKED_RELEASE(m_SamplerState);
 }
 
 bool CTexture::Load(ID3D11Device* Device, const std::string& Filename)

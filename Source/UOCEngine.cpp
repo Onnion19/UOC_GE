@@ -64,6 +64,18 @@ void CUOCEngine::Update()
 		m_CameraManager->ChangeControl();
 	}
 
+	if (l_KeyboardInput->KeyBecomesPressed(DIK_Q))
+	{
+		auto renderDebug = m_RenderManager->GetDrawAxisGridAddress();
+		*renderDebug = !*renderDebug;
+	}
+
+	if (l_KeyboardInput->KeyBecomesPressed(DIK_E))
+	{
+		auto paintSolid = m_RenderManager->GetPaintSolidAddress();
+		*paintSolid = !*paintSolid;
+	}
+
 	m_CameraManager->Update(m_ElapsedTime.count());
 	m_RenderableObjectManager->Update(m_ElapsedTime.count());
 }
@@ -92,7 +104,7 @@ void CUOCEngine::Render()
 	m_EffectManager->SetSceneConstantBuffer(l_DeviceContext);
 	m_RenderableObjectManager->Render(l_DeviceContext);
 
-	if (true)
+	if (m_RenderManager->DrawAxisGrid())
 	{
 		XMMATRIX world = DirectX::XMMatrixIdentity();
 		CEffectManager::m_ObjectConstantBufferParameters.m_World = DirectX::XMMatrixTranspose(world);
