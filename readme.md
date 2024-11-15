@@ -18,7 +18,19 @@ El projecte s'ha dissenyat sota MCVS 2022 i C++20. Segurament és retrocompatibl
 
 Un cop executat genera la solució `.sln` que es pot obrir i executar.
 
+## Com jugar
 
+**WASD** pel moviment del personatge.
+
+**Space** per saltar
+
+**Ratolí** per rotar la càmera.
+
+**C i tab** per canviar càmera i controlador.
+
+**Q** per activar i desactivar el debug renderer.
+
+**E** per activar i desactivar el wireframe renderer.
 
 ## Implementació:
 
@@ -34,57 +46,141 @@ https://github.com/Onnion19/UOC_GE/pull/1/files
 
 ### 1. Implementació de les càmeres: 
 
-Càmera Mànager: https://github.com/Onnion19/UOC_GE/pull/1/files#diff-a9bca573b37a851c52875172f29325285cc5886b739fe186bed1adb7be6d97ce
+- Càmera Mànager: https://github.com/Onnion19/UOC_GE/pull/1/files#diff-a9bca573b37a851c52875172f29325285cc5886b739fe186bed1adb7be6d97ce
 
-Càmera Controller: https://github.com/Onnion19/UOC_GE/pull/1/files#diff-d9ff4727716756ac51aaed5c0465f2dc6225f4525a133b7827a147c48c3931f9
+- Càmera Controller: https://github.com/Onnion19/UOC_GE/pull/1/files#diff-d9ff4727716756ac51aaed5c0465f2dc6225f4525a133b7827a147c48c3931f9
 
-- Càlcul dels vectors Up i Right: 
+​	Càlcul dels vectors Up i Right: 
 
-  ```c++
-  XMFLOAT3 CCameraController::GetUp() const
-  {
-  	// En aquest cas de moment he decidit només tenir el UP perpendicular al plaXZ .
-  	// Quan la càmera hagi de rotar en 3 eixos, aleshores es re-implementarà per tenir en compte el yaw, pitch, roll
-  	return { 0, cos(m_Pitch),0};
-  }
-  
-  
-  XMFLOAT3 CCameraController::GetRight() const
-  {
-      // Utilitzo el cross product per trobar el vector perpendicular al forward i up.
-  	auto forward = GetDirection();
-  	auto up = GetUp();
-  
-  	auto forwardvec = XMLoadFloat3(&forward);
-  	auto upvec = XMLoadFloat3(&up);
-  
-  	auto rightvec = DirectX::XMVector3Cross(forwardvec, upvec);
-  	XMFLOAT3 right;
-  	XMStoreFloat3(&right, rightvec);
-  	return right;
-  }
-  ```
+```c++
+XMFLOAT3 CCameraController::GetUp() const
+{
+	// En aquest cas de moment he decidit només tenir el UP perpendicular al plaXZ .
+	// Quan la càmera hagi de rotar en 3 eixos, aleshores es re-implementarà per tenir en compte el yaw, pitch, roll
+	return { 0, cos(m_Pitch),0};
+}
 
-  
 
-Càmera:https://github.com/Onnion19/UOC_GE/pull/1/files#diff-1bac867d857912711b15db511f561ba46522bf71668579bcf60258a304bf83ec
+XMFLOAT3 CCameraController::GetRight() const
+{
+    // Utilitzo el cross product per trobar el vector perpendicular al forward i up.
+	auto forward = GetDirection();
+	auto up = GetUp();
 
-FPS Camera Controller: https://github.com/Onnion19/UOC_GE/pull/1/files#diff-9120cfa7c65ce0fc0e4a3149d076b63da910b8fdbd72b6ae406934cf88793655
+	auto forwardvec = XMLoadFloat3(&forward);
+	auto upvec = XMLoadFloat3(&up);
 
-- Càlcul dels vector de direcció: 
-  ``` c++
-  XMFLOAT3 CFPSCameraController::GetDirection() const
-  {
-  	XMFLOAT3 direction = 	 {
-  		cos(m_Yaw), sin(m_Pitch),sin(m_Yaw)
-  	};
-  	return direction;
-  }
-  ```
+	auto rightvec = DirectX::XMVector3Cross(forwardvec, upvec);
+	XMFLOAT3 right;
+	XMStoreFloat3(&right, rightvec);
+	return right;
+}
+```
 
-  
+
+
+- Càmera:https://github.com/Onnion19/UOC_GE/pull/1/files#diff-1bac867d857912711b15db511f561ba46522bf71668579bcf60258a304bf83ec
+
+- FPS Camera Controller: https://github.com/Onnion19/UOC_GE/pull/1/files#diff-9120cfa7c65ce0fc0e4a3149d076b63da910b8fdbd72b6ae406934cf88793655
+
+Set Càmera: 
+```c++
+void CFPSCameraController::SetCamera(CCamera* Camera) const
+{
+	Camera->SetFOV(DEG2RAD(50.f));
+	Camera->SetAspectRatio(16.f / 9.f);
+
+	auto direction = GetDirection();
+	XMVECTOR directionVec = XMLoadFloat3(&direction);
+	XMVECTOR positionVec = XMLoadFloat3(&m_Position);
+	XMFLOAT3 lookAt{};
+    // Volem mirar endavant, així que mirarem des del jugador cap endavant.
+	auto lookAtVec = DirectX::XMVectorAdd(positionVec, directionVec);
+	XMStoreFloat3(&lookAt, lookAtVec);
+	Camera->SetLookAt(lookAt);
+	Camera->SetPosition(m_Position);
+	Camera->SetUp(GetUp());
+	Camera->SetMatrixs();
+}
+```
+
+
+
+Càlcul dels vector de direcció: 
+``` c++
+XMFLOAT3 CFPSCameraController::GetDirection() const
+{
+	XMFLOAT3 direction = 	 {
+		cos(m_Yaw), sin(m_Pitch),sin(m_Yaw)
+	};
+	return direction;
+}
+```
+
+Moviment: 
+```c++
+void CFPSCameraController::Move(float Strafe, float Forward, bool Speed, float ElapsedTime)
+{
+
+	XMFLOAT3 forwardVec = GetDirection();
+	XMVECTOR forward = XMLoadFloat3(&forwardVec);
+
+	XMFLOAT3 rightVec = GetRight();
+	XMVECTOR right = XMLoadFloat3(&rightVec);
+
+	XMVECTOR movement = DirectX::XMVectorAdd(
+		DirectX::XMVectorScale(forward, Forward),
+		DirectX::XMVectorScale(right, Strafe)
+	);
+
+	movement = DirectX::XMVector3Normalize(movement);
+
+	float speedMultiplier = Speed ? m_FastSpeed : m_Speed;
+	movement = DirectX::XMVectorScale(movement, speedMultiplier * ElapsedTime);
+
+	XMVECTOR currentPosition = XMLoadFloat3(&m_Position);
+	XMVECTOR newPosition = DirectX::XMVectorAdd(currentPosition, movement);
+	XMStoreFloat3(&m_Position, newPosition);
+}
+```
+
+
 
 Spherical Camera Controller:https://github.com/Onnion19/UOC_GE/pull/1/files#diff-fce7ae56ceb952bcaef1e365ddad65dc1472664a36153ac2e18222cf0ef0fbee
+
+Moviment: 
+
+```c++
+
+void CSphericalCameraController::Update(float ElapsedTime)
+{
+	auto mouseInput = CUOCEngine::GetEngine()->GetInputManager()->GetMouse();
+	AddYaw(mouseInput->GetMovementX() * ElapsedTime * m_RotationSpeed);
+	AddPitch(mouseInput->GetMovementY() * ElapsedTime * m_RotationSpeed);
+	AddZoom(mouseInput->GetMovementZ() * ElapsedTime * m_ZoomSpeed);
+}
+```
+
+Set Càmera: 
+```c++
+void CSphericalCameraController::SetCamera(CCamera* Camera) const
+{
+	Camera->SetFOV(DEG2RAD(50));
+	Camera->SetAspectRatio(16.f / 9.f);
+	Camera->SetLookAt(m_Position);
+    // Volem girar al volant del jugador, així que apuntem cap al centre.
+	{
+		const auto x = Camera->GetPosition().x - m_Position.x;
+		const auto y = Camera->GetPosition().y - m_Position.y;
+		const auto z = Camera->GetPosition().z - m_Position.z;
+		Camera->SetPosition({ x,y,z });
+	}
+	Camera->SetUp(GetUp());
+	Camera->SetMatrixs();
+}
+```
+
+
 
 ---
 
@@ -282,6 +378,20 @@ for (int circle = 0; circle < l_circles; circle++) //Per cada cercle que volem d
   	{
   		m_CameraManager->ChangeControl();
   	}
+      
+      // Toggle del debug render
+      if (l_KeyboardInput->KeyBecomesPressed(DIK_Q))
+  	{
+  		auto renderDebug = m_RenderManager->GetDrawAxisGridAddress();
+  		*renderDebug = !*renderDebug;
+  	}
+  
+      // Toggle del wireframe
+  	if (l_KeyboardInput->KeyBecomesPressed(DIK_E))
+  	{
+  		auto paintSolid = m_RenderManager->GetPaintSolidAddress();
+  		*paintSolid = !*paintSolid;
+  	}
   
   	m_CameraManager->Update(m_ElapsedTime.count());
   	m_RenderableObjectManager->Update(m_ElapsedTime.count());
@@ -370,12 +480,11 @@ for (int circle = 0; circle < l_circles; circle++) //Per cada cercle que volem d
   CFBXManager::CFBXManager()
   	: m_Manager(FbxManager::Create(), fbxManagerDtor)
   {
-  	FbxIOSettings *l_IOSettings=FbxIOSettings::Create(m_Manager, IOSROOT);
   	FbxIOSettings *l_IOSettings=FbxIOSettings::Create(m_Manager.get(), IOSROOT);
   	m_Manager->SetIOSettings(l_IOSettings);
   }
   ```
-
+  
 - **FBX Static Mesh**: https://github.com/Onnion19/UOC_GE/pull/1/files#diff-e4b96b7c222e1489ea1a1bc0217ac964b87be7f41b86cf3c9b817d2b02c7cbc5
 
   El canvi més important és la càrrega dels vèrtex del model als buffers, el qual evita duplicats. A més a més s'ha eliminat codi duplicat que es podia replicar de forma iterativa.
