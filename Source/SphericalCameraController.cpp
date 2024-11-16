@@ -7,28 +7,29 @@
 #include "MouseInput.h"
 
 
-
-
-XMFLOAT3 CSphericalCameraController::GetDirection() const
-{
-	XMFLOAT3 direction = {
-		cos(m_Yaw), sin(m_Pitch),sin(m_Yaw)
-	};
-	return direction;
-
-}
-
 void CSphericalCameraController::SetCamera(CCamera* Camera) const
 {
-	Camera->SetFOV(DEG2RAD(50));
+	constexpr auto SphericaltoCartesian = [](float thetaRadians, float sigmaRadians, float radius) ->XMFLOAT3 {
+		return {
+			radius * sin(thetaRadians) * cos(sigmaRadians),
+			radius * cos(thetaRadians) + radius * 1.2f, //add radius to offset the sphere to be fully visible.
+			radius * sin(thetaRadians) * sin(sigmaRadians)
+		};
+		};
+
+	Camera->SetFOV(DEG2RAD(50 + m_Zoom));
 	Camera->SetAspectRatio(16.f / 9.f);
+
 	Camera->SetLookAt(m_Position);
-	{
-		const auto x = Camera->GetPosition().x - m_Position.x;
-		const auto y = Camera->GetPosition().y - m_Position.y;
-		const auto z = Camera->GetPosition().z - m_Position.z;
-		Camera->SetPosition({ x,y,z });
-	}
+
+	auto cameraPos = SphericaltoCartesian(m_Pitch + DEG2RAD(90), m_Yaw, distance);
+
+	Camera->SetPosition({
+		cameraPos.x + m_Position.x,
+		cameraPos.y + m_Position.y,
+		cameraPos.z + m_Position.z
+		});
+
 	Camera->SetUp(GetUp());
 	Camera->SetMatrixs();
 }

@@ -112,7 +112,7 @@ void CUOCEngine::Render()
 		m_DebugRender->DrawAxis(l_DeviceContext, 8.f);
 		m_DebugRender->DrawGrid(l_DeviceContext, 1.f, { 1.f, 1.f, 1.f, 1.f });
 		m_DebugRender->DrawCube(l_DeviceContext, 4.f, { 1.f, 1.f, 0.f, 1.f });
-		m_DebugRender->DrawSphere(l_DeviceContext, 2.f, { 0.f, 0.f, 1.f, 1.f });
+		m_DebugRender->DrawSphere(l_DeviceContext, 10.f, { 0.f, 0.f, 1.f, 1.f });
 	}
 	m_RenderManager->EndRenderDX();
 }

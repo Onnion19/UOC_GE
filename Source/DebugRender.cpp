@@ -111,7 +111,7 @@ CDebugRender::CDebugRender(ID3D11Device* Device)
 	constexpr auto SphericaltoCartesian = [](float thetaRadians, float sigmaRadians, float radius) ->XMFLOAT3 {
 		return {
 			radius * sin(thetaRadians) * cos(sigmaRadians),
-			radius * cos(thetaRadians) + radius*1.2f, //add radius to offset the sphere to be fully visible.
+			radius * cos(thetaRadians) + radius, //add radius to offset the sphere to be fully visible.
 			radius * sin(thetaRadians) * sin(sigmaRadians)
 		};
 	};

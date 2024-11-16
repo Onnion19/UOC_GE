@@ -7,15 +7,17 @@ class CSphericalCameraController : public CCameraController
 {
 private:
 	float m_Zoom = 50.f;
-	static constexpr float m_ZoomSpeed = 2.f;
+	float theta = 0.f;
+	float sigma = 0.f;
+	float distance = 10.f;
+
+	static constexpr float m_ZoomSpeed = 15.f;
 	static constexpr float m_RotationSpeed = 30.f;
 public:
-
 	void AddZoom(float Zoom) {m_Zoom+=Zoom;}
 	void SetZoom(float Zoom) {m_Zoom=Zoom;}
 	
 	void SetCamera(CCamera *Camera) const;
-	XMFLOAT3 GetDirection() const;
 	void Update(float ElapsedTime);
 };
 

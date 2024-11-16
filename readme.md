@@ -54,29 +54,35 @@ https://github.com/Onnion19/UOC_GE/pull/1/files
 
 ​	Càlcul dels vectors Up i Right: 
 
+​	Pel vector Up es fa el cross product entre la direcció i el vector dret. Mentre que el vector dret simplement s'utiltiza el perpendicular en 2 eixos sobre la direcció, que és similar a rotar 90º el yaw.
+
 ```c++
 XMFLOAT3 CCameraController::GetUp() const
 {
-	// En aquest cas de moment he decidit només tenir el UP perpendicular al plaXZ .
-	// Quan la càmera hagi de rotar en 3 eixos, aleshores es re-implementarà per tenir en compte el yaw, pitch, roll
-	return { 0, cos(m_Pitch),0};
+	auto forward = GetDirection();
+	auto forward_vec = XMLoadFloat3(&forward);
+
+	auto right = GetRight();
+	auto right_vec = XMLoadFloat3(&right);
+
+	auto up_vec = DirectX::XMVector3Cross(right_vec, forward_vec);
+	
+	XMFLOAT3 up{};
+	XMStoreFloat3(&up, up_vec);
+
+	return up;
 }
 
 
 XMFLOAT3 CCameraController::GetRight() const
 {
-    // Utilitzo el cross product per trobar el vector perpendicular al forward i up.
-	auto forward = GetDirection();
-	auto up = GetUp();
-
-	auto forwardvec = XMLoadFloat3(&forward);
-	auto upvec = XMLoadFloat3(&up);
-
-	auto rightvec = DirectX::XMVector3Cross(forwardvec, upvec);
-	XMFLOAT3 right;
-	XMStoreFloat3(&right, rightvec);
-	return right;
+	return {
+	   -sinf(m_Yaw),
+	   0.0f,
+	   cosf(m_Yaw)
+	};
 }
+
 ```
 
 
