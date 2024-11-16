@@ -1,6 +1,6 @@
 #include "defines.h"
 
-void GetFilename(const char *path, std::string *filename)
+void GetFilename(const char *path, std::string& filename)
 {
 	char *pnt=NULL;
 	for(int b=(int)strlen(path);b>0;--b)
@@ -13,7 +13,7 @@ void GetFilename(const char *path, std::string *filename)
 	}
 	if(pnt==NULL)
 		pnt=(char*)&(path[0]);
-	*filename=pnt;
+	filename=pnt;
 }
 
 float DistanceSqrXZ(const XMFLOAT3 &PosA, const XMFLOAT3 &PosB)

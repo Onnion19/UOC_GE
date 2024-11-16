@@ -11,7 +11,7 @@ private:
 	CFBXStaticMesh					*m_StaticMesh;
 public:
 	CMeshInstance(CFBXStaticMesh *StaticMesh);
-	virtual ~CMeshInstance();
+	virtual ~CMeshInstance() = default;
 	void Render(ID3D11DeviceContext *DeviceContext);
 
 };

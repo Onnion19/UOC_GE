@@ -1,22 +1,14 @@
 #include "Camera.h"
 
-CCamera::CCamera()
-//TO DO : Inicializr la variable miembro m_FOV con 60 grados en radianes utilizando la macro DEG2RAD
-//TO DO : Inicializr la variable miembro m_Aspect Ratio a 1.0f
-//TO DO : Inicializr la variable miembro m_ZNear a 0.1f
-//TO DO : Inicializr la variable miembro m_ZFar a 100.0f
-//TO DO : Inicializr la variable miembro m_LookAt a la posición 0, 0, 0
-//TO DO : Inicializr la variable miembro m_Up con el vector vertical 0, 1, 0
-{
-}
-
-CCamera::~CCamera()
-{
-}
-
 void CCamera::SetMatrixs()
 {
 	//NOTA : Para construir una variable de tipo XMVECTOR utilizar la función de DirectX::XMVectorSet
-	//TO DO : Construir la matriz de view en la variable m_View utilizando la función de DirectX::XMMatrixLookAtRH
-	//TO DO : Construir la matriz de proyección en la variable m_Projection utilizando la función de DirectX::XMMatrixPerspectiveFovRH
+	auto eye = DirectX::XMVectorSet(m_Position.x, m_Position.y, m_Position.z, 0);
+	auto lookAt = DirectX::XMVectorSet(m_LookAt.x, m_LookAt.y, m_LookAt.z, 0);
+	// Not sure about this up vector. 4d should be 1 representing a vector or 0?
+	auto up = DirectX::XMVectorSet(m_Up.x, m_Up.y, m_Up.z, 1);
+
+	m_View = DirectX::XMMatrixLookAtRH(eye, lookAt, up);
+
+	m_Projection = DirectX::XMMatrixPerspectiveFovRH(m_FOV, m_AspectRatio, m_ZNear, m_ZFar);
 }

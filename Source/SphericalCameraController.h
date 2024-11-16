@@ -6,11 +6,10 @@
 class CSphericalCameraController : public CCameraController
 {
 private:
-	float						m_Zoom;
-	float						m_ZoomSpeed;
+	float m_Zoom = 50.f;
+	static constexpr float m_ZoomSpeed = 2.f;
+	static constexpr float m_RotationSpeed = 30.f;
 public:
-	CSphericalCameraController();
-	virtual ~CSphericalCameraController();
 
 	void AddZoom(float Zoom) {m_Zoom+=Zoom;}
 	void SetZoom(float Zoom) {m_Zoom=Zoom;}

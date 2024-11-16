@@ -16,11 +16,16 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-CApplicationDX *g_ApplicationDX = NULL;
+CApplicationDX* g_ApplicationDX = NULL;
 
 HINSTANCE hInst;                                // instancia actual
 
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+
+int main()
+{
+	wWinMain(nullptr, nullptr, nullptr, 0);
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -81,11 +86,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		else
-		{
-			g_ApplicationDX->Update();
-			g_ApplicationDX->Render();
-		}
+
+		g_ApplicationDX->Update();
+		g_ApplicationDX->Render();
+
 	}
 
 	CHECKED_DELETE(g_ApplicationDX);

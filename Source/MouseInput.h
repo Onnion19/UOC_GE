@@ -9,12 +9,16 @@ private:
 	LPDIRECTINPUT8						m_DI;
 	LPDIRECTINPUTDEVICE8				m_Mouse;	
 
-	int									m_MovementX;
-	int									m_MovementY;
-	int									m_MovementZ;
-	bool								m_ButtonRight, m_PreviousButtonRight;
-	bool								m_ButtonLeft, m_PreviousButtonLeft;
-	bool								m_ButtonMiddle, m_PreviousButtonMiddle;
+	int									m_MovementX = 0;
+	int									m_MovementY = 0;
+	int									m_MovementZ = 0;
+	bool								m_ButtonRight = false;
+	bool								m_PreviousButtonRight = false;
+	bool								m_ButtonLeft = false;
+	bool								m_PreviousButtonLeft = false;
+	bool								m_ButtonMiddle = false;
+	bool								m_PreviousButtonMiddle = false;
+
 public:
 	CMouseInput(HWND hWnd);
 	virtual ~CMouseInput();

@@ -8,19 +8,20 @@ class CCamera;
 class CFPSCameraController : public CCameraController
 {
 private:
-	float						m_YawSpeed;
-	float						m_PitchSpeed;
-	float						m_Speed;
-	float						m_FastSpeed;
+	static constexpr float m_YawSpeed = 10.f;
+	static constexpr float m_PitchSpeed = 6.f;
+	static constexpr float m_Speed = 5.f;
+	static constexpr float m_FastSpeed = 10.f;
 public:
 	CFPSCameraController();
-	virtual ~CFPSCameraController();
+
 	
 	void Move(float Strafe, float Forward, bool Speed, float ElapsedTime);
 	void SetCamera(CCamera *Camera) const;
 	void AddYaw(float Radians);
 	void AddPitch(float Radians);
 	XMFLOAT3 GetDirection() const;
+	void Update(float delta) override;
 };
 
 #endif

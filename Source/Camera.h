@@ -6,19 +6,19 @@
 
 class CCamera
 {	
+
 private:
-	XMMATRIX					m_View;
-	XMMATRIX					m_Projection;
-	XMFLOAT3					m_Position;
-	XMFLOAT3					m_LookAt;
-	XMFLOAT3					m_Up;
-	float						m_FOV;
-	float						m_AspectRatio;
-	float						m_ZNear;
-	float						m_ZFar;
+	XMMATRIX m_View{};
+	XMMATRIX m_Projection{};
+	XMFLOAT3 m_Position{};
+	XMFLOAT3 m_LookAt{};
+	XMFLOAT3 m_Up{ 0,1,0 };
+	float m_FOV = DEG2RAD(60);
+	float m_AspectRatio = 1.f;
+	float m_ZNear = 0.1f;
+	float m_ZFar = 100.f;
 public:
-	CCamera();
-	virtual ~CCamera();
+	virtual ~CCamera() = default;
 
 	void SetFOV(float FOV) {m_FOV=FOV;}
 	float GetFOV() const {return m_FOV;}

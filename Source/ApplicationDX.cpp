@@ -13,53 +13,54 @@
 #include "UOCEngine.h"
 #include "RenderManager.h"
 
-CApplicationDX::CApplicationDX()
-: m_Player(NULL)
-{
-}
-
 CApplicationDX::~CApplicationDX()
 {
-	//TO DO : Llamar al método Destroy de la clase singleton CUOCEngine
-	//TO DO : Hacer el CHECKED_DELETE del singleton de la clase CUOCEngine
-	//TO DO : Hacer el CHECKED_DELETE de la instancia del Player
+	auto engine = CUOCEngine::GetEngine();
+	engine->Destroy();
+	CHECKED_DELETE(engine);
 }
 
 void CApplicationDX::Init(HWND hWnd, int Width, int Height)
 {
-	//TO DO : Inicializar el motor llamando al método Init de la clase singleton CUOCEngine
-	//TO DO : Crear la instancia de la clase CPlayer
-	//TO DO : Llamar al método Load del FBXManager del motor y cargar el fichero fbx "data/models/world/World.fbx"
+	CUOCEngine::GetEngine()->Init(hWnd, Width, Height);
+	m_Player = std::make_unique<CPlayer>();
+	CUOCEngine::GetEngine()->GetFBXManager()->Load("data/models/world/World.fbx");
 }
 
 void CApplicationDX::Render()
 {
-	//TO DO : Llamar al método Render de la clase singleton CUOCEngine
+	CUOCEngine::GetEngine()->Render();
+}
+
+CPlayer* CApplicationDX::GetPlayer() const
+{
+	return m_Player.get();
 }
 
 void CApplicationDX::Update()
 {
-	//TO DO : Llamar al método Update de la clase singleton CUOCEngine
-	//TO DO : Llamar al método Update de la instancia player pasándole el elapsed time del motor
+	CUOCEngine::GetEngine()->Update();
+	auto delta = CUOCEngine::GetEngine()->GetElapsedTime();
+	m_Player->Update(delta);
 }
 
 LRESULT WINAPI CApplicationDX::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch( msg )
-    {
-		case WM_DESTROY:
-            PostQuitMessage( 0 );
-            return 0;
-		case WM_KEYDOWN:
+	switch (msg)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	case WM_KEYDOWN:
+	{
+		switch (wParam)
 		{
-			switch( wParam )
-			{
-				case VK_ESCAPE:
-					PostQuitMessage( 0 );
-					return 0;
-					break;
-			}
+		case VK_ESCAPE:
+			PostQuitMessage(0);
+			return 0;
+			break;
 		}
-    }
-    return DefWindowProc( hWnd, msg, wParam, lParam );
+	}
+	}
+	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
