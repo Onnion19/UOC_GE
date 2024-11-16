@@ -10,9 +10,11 @@ Dins de `Executable` es troben els executables compilats llestos per executar di
 
 ## Com  compilar
 
-El repositori es pot configurar utiltizant premake5 i llençant la comanda `premake5 generator` . Per exemple per una solució de vs20:
+El repositori es pot configurar utiltizant premake5 i llençant la comanda `premake generator` . Per exemple per una solució de vs20:
 
 ```
+premake vs2022
+// En alguns sistemes s'ha d'executar amb premake5: 
 premake5 vs2022
 ```
 
