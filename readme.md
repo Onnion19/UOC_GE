@@ -156,6 +156,8 @@ void CFPSCameraController::Move(float Strafe, float Forward, bool Speed, float E
 
 Spherical Camera Controller:https://github.com/Onnion19/UOC_GE/pull/1/files#diff-fce7ae56ceb952bcaef1e365ddad65dc1472664a36153ac2e18222cf0ef0fbee
 
+Nota: He modificat el comportament de la càmera esfèrica, en aquesta exemple he volgut provar que la càmera doni voltes al voltant del personatge seguint el patró d'una esfera. Podria ser un exemple de com implementar una càmera per fer screenshots del jugador.
+
 Moviment: 
 
 ```c++
@@ -173,22 +175,31 @@ Set Càmera:
 ```c++
 void CSphericalCameraController::SetCamera(CCamera* Camera) const
 {
-	Camera->SetFOV(DEG2RAD(50));
+	Camera->SetFOV(DEG2RAD(50 + m_Zoom));
 	Camera->SetAspectRatio(16.f / 9.f);
+
 	Camera->SetLookAt(m_Position);
-    // Volem girar al volant del jugador, així que apuntem cap al centre.
-	{
-		const auto x = Camera->GetPosition().x - m_Position.x;
-		const auto y = Camera->GetPosition().y - m_Position.y;
-		const auto z = Camera->GetPosition().z - m_Position.z;
-		Camera->SetPosition({ x,y,z });
-	}
+	// afegeixo 90 al pitch perque es vol recorrer l'esfera de forma transversal i no longitudinal.
+	auto cameraPos = SphericaltoCartesian(m_Pitch + DEG2RAD(90), m_Yaw, distance);
+
+	Camera->SetPosition({
+		cameraPos.x + m_Position.x,
+		cameraPos.y + m_Position.y,
+		cameraPos.z + m_Position.z
+		});
+
 	Camera->SetUp(GetUp());
 	Camera->SetMatrixs();
 }
 ```
 
+Exemple, el cercle blau representa l'espai de moviment de la càmera. Com es pot veure la càmera es troba a l'interior i es mou a través de la superfície de l'esfera.
 
+![ScreenShot1](./Docs/Images/ScreenCapture3.png)
+
+Exemple2: Foto des del punt més alt de l'esfera: 
+
+![ScreenShot1](./Docs/Images/ScreenCapture4.png)
 
 ---
 
