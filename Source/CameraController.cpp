@@ -3,26 +3,39 @@
 
 XMFLOAT3 CCameraController::GetRight() const
 {
-	auto forward = GetDirection();
-	auto up = GetUp();
+	return {
+	   -sinf(m_Yaw),
+	   0.0f,
+	   cosf(m_Yaw)
+	};
+}
 
-	auto forwardvec = XMLoadFloat3(&forward);
-	auto upvec = XMLoadFloat3(&up);
-
-	auto rightvec = DirectX::XMVector3Cross(forwardvec, upvec);
-	XMFLOAT3 right;
-	XMStoreFloat3(&right, rightvec);
-	return right;
+XMFLOAT3 CCameraController::GetDirection() const
+{
+	XMFLOAT3 direction = {
+	cosf(m_Pitch) * cosf(m_Yaw),
+	sinf(m_Pitch),
+	cosf(m_Pitch) * sinf(m_Yaw)
+	};
+	return direction;
 }
 
 
 XMFLOAT3 CCameraController::GetUp() const
 {
-	return {
-		sinf(m_Pitch) * cosf(m_Yaw),
-		cosf(m_Pitch),
-		sinf(m_Pitch) * sinf(m_Yaw)
-	};
+	auto forward = GetDirection();
+	auto forward_vec = XMLoadFloat3(&forward);
+
+	auto right = GetRight();
+	auto right_vec = XMLoadFloat3(&right);
+
+
+	auto up_vec = DirectX::XMVector3Cross(right_vec, forward_vec);
+	
+	XMFLOAT3 up{};
+	XMStoreFloat3(&up, up_vec);
+
+	return up;
 }
 
 CCameraController::~CCameraController()

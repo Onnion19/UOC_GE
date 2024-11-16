@@ -26,7 +26,7 @@ public:
 	float GetPitch() const {return m_Pitch;}
 	XMFLOAT3 GetUp() const;
 	XMFLOAT3 GetRight() const;
-	virtual XMFLOAT3 GetDirection() const {	return { 1,0,0 };}
+	virtual XMFLOAT3 GetDirection() const;
 	const XMFLOAT3 & GetPosition() const {return m_Position;}
 	void SetPosition(const XMFLOAT3 &Position) {m_Position=Position;}
 	virtual void Update(float ElapsedTime) = 0;

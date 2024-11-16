@@ -68,7 +68,7 @@ void CFPSCameraController::SetCamera(CCamera* Camera) const
 XMFLOAT3 CFPSCameraController::GetDirection() const
 {
 	XMFLOAT3 direction = {
-		cos(m_Yaw), sin(m_Pitch),sin(m_Yaw)
+		cosf(m_Pitch) * cosf(m_Yaw), sinf(m_Pitch), cosf(m_Pitch)* sinf(m_Yaw)
 	};
 	return direction;
 }
