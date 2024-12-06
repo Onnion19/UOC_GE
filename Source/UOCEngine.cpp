@@ -9,107 +9,131 @@
 #include "RenderableObjectManager.h"
 #include "TextureManager.h"
 #include "VertexTypes.h"
-
-CUOCEngine *CUOCEngine::m_UOCEngine=NULL;
-
-CUOCEngine::CUOCEngine()
-//TO DO : Inicializar la variable miembro m_RenderManager a NULL
-//TO DO : Inicializar la variable miembro m_DrawAntTweakBar a false
-//TO DO : Inicializar la variable miembro m_EffectManager a NULL
-//TO DO : Inicializar la variable miembro m_InputManager a NULL
-//TO DO : Inicializar la variable miembro m_CameraManager a NULL
-//TO DO : Inicializar la variable miembro m_PreviousTime a 0
-//TO DO : Inicializar la variable miembro m_DebugRender a NULL
-//TO DO : Inicializar la variable miembro m_FBXManager a NULL
-//TO DO : Inicializar la variable miembro m_RenderableObjectManager a NULL
-//TO DO : Inicializar la variable miembro m_TextureManager a NULL
-{
-}
+#include <ratio>
+CUOCEngine* CUOCEngine::m_UOCEngine = NULL;
 
 CUOCEngine::~CUOCEngine()
 {
+	Destroy();
 }
 
-CUOCEngine * CUOCEngine::GetEngine()
+CUOCEngine* CUOCEngine::GetEngine()
 {
-	//TO DO : Implementar el patrón Singleton, si la instancia m_UOCEngine es NULL crearla
-	//TO DO : Devolver la instancia m_UOCEngine
+	if (!m_UOCEngine)
+	{
+		m_UOCEngine = new CUOCEngine();
+	}
+
+	return m_UOCEngine;
 }
 
 void CUOCEngine::Init(HWND hWnd, int Width, int Height)
 {
-	//TO DO : Construye la variable miembro m_RenderManager
-	//TO DO : Llama al método Init de la variable miembro m_RenderManager
+	m_RenderManager = std::make_unique<CRenderManager>(hWnd, Width, Height);
+	m_InputManager = std::make_unique<CInputManager>(hWnd);
+	m_EffectManager = std::make_unique<CEffectManager>();
 
-	//TO DO : Construye la variable miembro m_InputManager
-	//TO DO : Construye la variable miembro m_EffectManager
+	m_DebugRender = std::make_unique<CDebugRender>(m_RenderManager->GetDevice());
+	m_CameraManager = std::make_unique<CCameraManager>();
+	m_CameraManager->Load("DATA/XML/cameras.xml");
 
-	//TO DO : Construye la variable miembro m_DebugRender pasando el parámetro el Device de la variable miembro m_RenderManager
 
-	//TO DO : Construye la variable miembro m_CameraManager
-	//TO DO : Llama al método Load de la variable miemtro m_CameraManager para cargar el fichero xml "./DATA/XML/cameras.xml"
-
-	//TO DO : Construye la variable miembro m_FBXManager
-	//TO DO : Construye la variable miembro m_RenderableObjectManager
-	//TO DO : Construye la variable miembro m_TextureManager
-	//TO DO : Inicializa la variable miembro m_PreviousTime asignándole el valor que devuelve la función timeGetTime()
+	m_FBXManager = std::make_unique<CFBXManager>();
+	m_RenderableObjectManager = std::make_unique<CRenderableObjectManager>();
+	m_TextureManager = std::make_unique<CTextureManager>();
+	m_PreviousTimeStamp = std::chrono::steady_clock::now();
 }
 
 void CUOCEngine::Update()
 {
-	//TO DO : Calcula el elapsed time del frame, para ello recoges el tiempo actual con la función timeGetTime() y le decrementamos el m_PreviousTime. Este valor se calcula en milisegundos y lo transformamos en segundos multiplicando por 0.001f
-	//TO DO : Asignamos a la variable m_PreviousTime el tiempo actual de este frame que hemos capturado en el TO DO anterior
+	const auto currentTime = clock::now();
+	m_ElapsedTime = currentTime - m_PreviousTimeStamp;
+	m_PreviousTimeStamp = currentTime;
 
-	//TO DO : Llamamos al método Update de la variable miembro m_InputManager para actualizar el Input
+	m_InputManager->Update();
 
-	CCameraController *l_CameraController=m_CameraManager->GetCameraController("player");
-	
-	CKeyboardInput *l_KeyboardInput=m_InputManager->GetKeyboard();
+	CKeyboardInput* l_KeyboardInput = m_InputManager->GetKeyboard();
 
-	//TO DO : Si la tecla DIK_TAB se pulsa en este frame (utilizamos el método KeyBecomesPressed de la instancia del KeyboardInput l_KeyboardInput), cambiamos el controlador de cámara que se utiliza para pintar con el método ChangeVision del m_CameraManager
-	//TO DO : Si la tecla DIK_C se pulsa en este frame, cambiamos el controlador de cámara que se utiliza para control con el método ChangeControl del m_CameraManager
-	//TO DO : Actualizamos el m_CameraManager llamando al método Update
-	//TO DO : Actualizamos el m_RenderableObjectManager llamando al método Update
+	if (l_KeyboardInput->KeyBecomesPressed(DIK_TAB))
+	{
+		m_CameraManager->ChangeVision();
+	}
+
+	if (l_KeyboardInput->KeyBecomesPressed(DIK_C))
+	{
+		m_CameraManager->ChangeControl();
+	}
+
+	if (l_KeyboardInput->KeyBecomesPressed(DIK_Q))
+	{
+		auto renderDebug = m_RenderManager->GetDrawAxisGridAddress();
+		*renderDebug = !*renderDebug;
+	}
+
+	if (l_KeyboardInput->KeyBecomesPressed(DIK_E))
+	{
+		auto paintSolid = m_RenderManager->GetPaintSolidAddress();
+		*paintSolid = !*paintSolid;
+	}
+
+	m_CameraManager->Update(m_ElapsedTime.count());
+	m_RenderableObjectManager->Update(m_ElapsedTime.count());
 }
 
 void CUOCEngine::Render()
 {
-	//TO DO : Llamar al método BeginRenderDX de la instancia m_RenderManager
-	ID3D11DeviceContext *l_DeviceContext=m_RenderManager->GetDeviceContext();
+	m_RenderManager->BeginRenderDX();
+	ID3D11DeviceContext* l_DeviceContext = m_RenderManager->GetDeviceContext();
 
-	//TO DO : Si debemos pintar en modo sólido (utilizamos el métod GetPaintSolid de la clase m_RenderManager), establecemos el renderstate de sólido utilizando el método SetSolidRenderState de la clase m_RenderManager
-	//TO DO : En caso contrario establecemos el render state en modo alambre utilizando el método SetWireframeRenderState de la clase m_RenderManager
-	//TO DO : Recoger la matriz de view de la cámara de la variable miembro m_CameraManager
-	//TO DO : Recoger la matriz de proyección de la cámara de la variable miembro m_CameraManager
-	//TO DO : Establecer la variable miembro m_View de la variable miembro estática m_SceneConstantBufferParameters de la clase CEffectManager, el valor será la matriz transpuesta de la matriz de View que hemos recogido en el TODO anterior, para realizar la matriz transpuesta utilizamos la función de DirectX XMMatrixTranspose
-	//TO DO : Establecer la variable miembro m_Projection de la variable miembro estática m_SceneConstantBufferParameters de la clase CEffectManager, el valor será la matriz transpuesta de la matriz de Projection que hemos recogido en el TODO anterior, para realizar la matriz transpuesta utilizamos la función de DirectX XMMatrixTranspose
-	//TO DO : Establecer las constantes de escena en la variable miembro m_EffectManager utilizando el método SetSceneConstantBuffer
-	//TO DO : Llamar al método Render de la variable miembro m_RenderableObjectManager
-
-	
-	if(m_RenderManager->DrawAxisGrid())
+	if (m_RenderManager->GetPaintSolid())
 	{
-		//TO DO : Crear una variable de tipo XMMATRIX que contendrá la matriz de mundo y asignarle el valor identidad mediante la función DirectX:::XMMatrixIdentity
-		//TO DO : Establecer en la variable miembro m_World de la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager, estableceremos la matriz transpuesta de la variable de mundo que hemos creado en el TO DO anterior
-		//TO DO : Llamar al método SetObjectConstantBuffer de la variable miembro m_EffectManager para establecer las constantes de objeto
-		//TO DO : Llamar al método DrawAxis de la variable miembro m_DebugRender con un Size de 8.0f
-		//TO DO : Llamar al método DrawGrid de la variable miembro m_DebugRender con un Size de 1.0f y color blanco
-		//TO DO : Llamar al método DrawCube de la variable miembro m_DebugRender con un Size de 3.0f y color blanco
-		//TO DO : Llamar al método DrawSphere de la variable miembro m_DebugRender con un Size de 0.5f y color blanco
+		m_RenderManager->SetSolidRenderState(l_DeviceContext);
+	}
+	else
+	{
+		m_RenderManager->SetWireframeRenderState(l_DeviceContext);
 	}
 
-	//TO DO : Llamar al método EndRenderDX de la instancia m_RenderManager
+
+	const auto& view = m_CameraManager->GetCamera().GetView();
+	const auto& proj = m_CameraManager->GetCamera().GetProjection();
+
+	CEffectManager::m_SceneConstantBufferParameters.m_View = DirectX::XMMatrixTranspose(view);
+	CEffectManager::m_SceneConstantBufferParameters.m_Projection = DirectX::XMMatrixTranspose(proj);
+
+	m_EffectManager->SetSceneConstantBuffer(l_DeviceContext);
+	m_RenderableObjectManager->Render(l_DeviceContext);
+
+	if (m_RenderManager->DrawAxisGrid())
+	{
+		XMMATRIX world = DirectX::XMMatrixIdentity();
+		CEffectManager::m_ObjectConstantBufferParameters.m_World = DirectX::XMMatrixTranspose(world);
+		m_EffectManager->SetObjectConstantBuffer(l_DeviceContext);
+		m_DebugRender->DrawAxis(l_DeviceContext, 8.f);
+		m_DebugRender->DrawGrid(l_DeviceContext, 1.f, { 1.f, 1.f, 1.f, 1.f });
+		m_DebugRender->DrawCube(l_DeviceContext, 4.f, { 1.f, 1.f, 0.f, 1.f });
+		m_DebugRender->DrawSphere(l_DeviceContext, 10.f, { 0.f, 0.f, 1.f, 1.f });
+	}
+	m_RenderManager->EndRenderDX();
 }
 
 void CUOCEngine::Destroy()
 {
-	//TO DO : Destruir la variable miembro m_DebugRender utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_InputManager utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_CameraManager utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_EffectManager utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_FBXManager utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_RenderableObjectManager utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_TextureManager utilizando la macro CHECKED_DELETE
-	//TO DO : Llamar al método Destroy de la variable miembro m_RenderManager
-	//TO DO : Destruir la variable miembro m_RenderManager utilizando la macro CHECKED_DELETE
+	m_RenderManager.reset();
+	m_EffectManager.reset();
+	m_InputManager.reset();
+	m_CameraManager.reset();
+	m_DebugRender.reset();
+	m_FBXManager.reset();
+	m_RenderableObjectManager.reset();
+	m_TextureManager.reset();
 }
+
+CRenderManager* CUOCEngine::GetRenderManager() { return m_RenderManager.get(); }
+CEffectManager* CUOCEngine::GetEffectManager() const { return m_EffectManager.get(); }
+CInputManager* CUOCEngine::GetInputManager() const { return m_InputManager.get(); }
+CCameraManager* CUOCEngine::GetCameraManager() const { return m_CameraManager.get(); }
+CDebugRender* CUOCEngine::GetDebugRender() const { return m_DebugRender.get(); }
+CFBXManager* CUOCEngine::GetFBXManager() const { return m_FBXManager.get(); }
+CRenderableObjectManager* CUOCEngine::GetRenderableObjectManager() const { return m_RenderableObjectManager.get(); }
+CTextureManager* CUOCEngine::GetTextureManager() const { return m_TextureManager.get(); }

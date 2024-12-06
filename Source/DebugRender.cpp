@@ -6,88 +6,192 @@
 #include <assert.h>
 #include "EffectManager.h"
 
-CDebugRender::CDebugRender(ID3D11Device *Device)
+CDebugRender::CDebugRender(ID3D11Device* Device)
 {
-	//TO DO : Establecer la variable m_Effect pidiéndole el Effect a la clase CEffectManager que se encuentra en el motor, pediremos el Efecto que tiene por tipo de vértice UOC_POSITION_COLOR_VERTEX::GetVertexType()
+	constexpr XMFLOAT4 WHITE{ 1.0f, 1.0f, 1.0f, 1.0f };
+	constexpr XMFLOAT4 RED{ 1.0f, 0.0f, 0.0f, 1.0f };
+	constexpr XMFLOAT4 GREEN{ 0.0f, 0.0f, 0.0f, 1.0f };
+	constexpr XMFLOAT4 BLUE{ 0.0f, 0.0f, 1.0f, 1.0f };
+
+	m_Effect = CUOCEngine::GetEngine()->GetEffectManager()->GetEffect(UOC_POSITION_COLOR_VERTEX::GetVertexType());
 	//AXIS
-	UOC_POSITION_COLOR_VERTEX l_AxisVtxs[6]=
+	UOC_POSITION_COLOR_VERTEX l_AxisVtxs[6] =
 	{
-		{XMFLOAT3( 0.0f, 0.0f, 0.0f ), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
-		{XMFLOAT3( 1.0f, 0.0f, 0.0f ), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
-			
-		{XMFLOAT3( 0.0f, 0.0f, 0.0f ), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
-		{XMFLOAT3( 0.0f, 1.0f, 0.0f ), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(0.0f, 0.0f, 0.0f), RED},
+		{XMFLOAT3(1.0f, 0.0f, 0.0f), RED},
 
-		{XMFLOAT3( 0.0f, 0.0f, 0.0f ), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
-		{XMFLOAT3( 0.0f, 0.0f, 1.0f ), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)}
+		{XMFLOAT3(0.0f, 0.0f, 0.0f), GREEN},
+		{XMFLOAT3(0.0f, 1.0f, 0.0f), GREEN},
+
+		{XMFLOAT3(0.0f, 0.0f, 0.0f), BLUE},
+		{XMFLOAT3(0.0f, 0.0f, 1.0f), BLUE}
 	};
-	
-	m_AxisRenderableVertexs=new CLinesListRenderableVertexs<UOC_POSITION_COLOR_VERTEX>(Device, l_AxisVtxs, 6, 3);
-	
+
+	m_AxisRenderableVertexs = new CLinesListRenderableVertexs<UOC_POSITION_COLOR_VERTEX>(Device, l_AxisVtxs, 6, 3);
+
 	//CUBE
-	const float l_SizeCube=1.0f;
-	UOC_POSITION_COLOR_VERTEX l_CubeVtxs[] =
+	const float l_SizeCube = 1.0f;
+	UOC_POSITION_COLOR_VERTEX l_CubeVtxs[24] =
 	{
-		//TO DO : Construye todos los vértices de la base del cubo para que el tamaño del cubo sea l_SizeCube, debemos crear dos vértices por linea, por tanto 8 vértices
-		//TO DO : Construye todos los vértices de la tapa del cubo para que el tamaño del cubo sea l_SizeCube, debemos crear dos vértices por linea, por tanto 8 vértices
+		//Base 
+		{XMFLOAT3(0.0f, 0.0f, 0.0f), WHITE},
+		{XMFLOAT3(l_SizeCube, 0.0f, 0.0f), WHITE},
+
+
+		{XMFLOAT3(l_SizeCube, 0.0f, 0.0f), WHITE},
+		{XMFLOAT3(l_SizeCube, 0.0f, l_SizeCube), WHITE},
+
+		{XMFLOAT3(l_SizeCube, 0.0f, l_SizeCube), WHITE},
+		{XMFLOAT3(0.f, 0.0f, l_SizeCube), WHITE},
+
+		{XMFLOAT3(0.f, 0.0f, l_SizeCube), WHITE},
+		{XMFLOAT3(0.f, 0.0f, 0.f), WHITE},
+
+
+		// Base elevada
+		{XMFLOAT3(0.0f, l_SizeCube, 0.0f), WHITE},
+		{XMFLOAT3(l_SizeCube, l_SizeCube, 0.0f), WHITE},
+
+
+		{XMFLOAT3(l_SizeCube, l_SizeCube, 0.0f), WHITE},
+		{XMFLOAT3(l_SizeCube, l_SizeCube, l_SizeCube), WHITE},
+
+		{XMFLOAT3(l_SizeCube, l_SizeCube, l_SizeCube), WHITE},
+		{XMFLOAT3(0.f, l_SizeCube, l_SizeCube), WHITE},
+
+		{XMFLOAT3(0.f, l_SizeCube, l_SizeCube), WHITE},
+		{XMFLOAT3(0.f, l_SizeCube, 0.f), WHITE},
+
 		//TO DO : Construye todos los vértices de las lineas laterales del cubo para que el tamaño del cubo sea l_SizeCube, debemos crear dos vértices por linea, por tanto 8 vértices
+		{XMFLOAT3(0.0f, 0.0f, 0.0f), WHITE},
+		{XMFLOAT3(0.0f, l_SizeCube, 0.0f), WHITE},
+
+		{XMFLOAT3(l_SizeCube, 0.0f, 0.0f), WHITE},
+		{XMFLOAT3(l_SizeCube, l_SizeCube, 0.0f), WHITE},
+
+		{XMFLOAT3(l_SizeCube, 0.0f, l_SizeCube), WHITE},
+		{XMFLOAT3(l_SizeCube, l_SizeCube, l_SizeCube), WHITE},
+
+		{XMFLOAT3(0.f, 0.0f, l_SizeCube), WHITE},
+		{XMFLOAT3(0.f, l_SizeCube, l_SizeCube), WHITE}
 	};
 
-	//TO DO : Construye la instancia m_CubeRenderableVertexs de tipo CLinesListRenderableVertexs<UOC_POSITION_COLOR_VERTEX> pasándole los vértices del cubo l_CubeVtxs, el número de vértices y el número de primitivas (número de lineas)
+	m_CubeRenderableVertexs = new CLinesListRenderableVertexs<UOC_POSITION_COLOR_VERTEX>(Device, l_CubeVtxs, 24, 12);
 
 	//GRID
-	float l_Size=10.0f;
-	const int l_Grid=10;
-	UOC_POSITION_COLOR_VERTEX l_GridVtxs[(l_Grid+1)*2*2];
-	//TO DO : Construye todos los vértices de la grid en el eje X, cada linea estará formada por dos vértices y el tamaño de la grid será l_Size y el número de secciones de la grid será l_Grid
-	//TO DO : Construye todos los vértices de la grid en el eje Z, cada linea estará formada por dos vértices y el tamaño de la grid será l_Size y el número de secciones de la grid será l_Grid
-	//TO DO : Construye la instancia m_GridRenderableVertexs de tipo CLinesListRenderableVertexs<UOC_POSITION_COLOR_VERTEX> pasándole los vértices del cubo l_GridVtxs, el número de vértices y el número de primitivas (número de lineas)
-	
+	constexpr float l_Size = 10.0f;
+	constexpr int l_Grid = 10;
+	constexpr float deltaGrid = l_Size / l_Grid;
+	constexpr auto gridVert = (l_Grid + 1) * 2 * 2;
+	constexpr float height = 0.15f;
+	UOC_POSITION_COLOR_VERTEX l_GridVtxs[gridVert];
+
+	for (int i = 0; i <= l_Grid; i++)
+	{
+		const int positionY = i * 2;
+		const int positionZ = gridVert / 2 + positionY;
+		l_GridVtxs[positionY] = { XMFLOAT3(deltaGrid * i, height, 0.0f), WHITE };
+		l_GridVtxs[positionY + 1] = { XMFLOAT3(deltaGrid * i, height, l_Size), WHITE };
+
+		l_GridVtxs[positionZ] = { XMFLOAT3(0.f, height, deltaGrid * i), WHITE };
+		l_GridVtxs[positionZ + 1] = { XMFLOAT3(l_Size, height, deltaGrid * i), WHITE };
+	}
+
+	m_GridRenderableVertexs = new CLinesListRenderableVertexs<UOC_POSITION_COLOR_VERTEX>(Device, l_GridVtxs, gridVert, gridVert / 2);
+
 	//SPHERE
-	const int l_Aristas=10;
-	UOC_POSITION_COLOR_VERTEX l_SphereVtxs[4*l_Aristas*l_Aristas];
-	//TO DO : Construye todos los vértices de la esfera, para ello crearemos círculos sobre el plano XZ desplazados en el eje Y según el número de Aristas, recordar que al pintarse con lineas esos círculos debemos crear dos vértices por línea
-	//TO DO : Construye todos los vértices de la esfera, para ello crearemos círculos sobre el plano XY desplazados en el eje Z según el número de Aristas, recordar que al pintarse con lineas esos círculos debemos crear dos vértices por línea
-	//TO DO : Construye la instancia m_SphereRenderableVertexs de tipo CLinesListRenderableVertexs<UOC_POSITION_COLOR_VERTEX> pasándole los vértices de la esfera l_SphereVtxs, el número de vértices y el número de primitivas (número de lineas)
+	constexpr int l_VertexCircle = 40;
+	constexpr int l_circles = 40;
+	constexpr int verticesCount = l_VertexCircle * (l_circles) * 4;
+	constexpr float thetaDelta = DEG2RAD(180) / l_circles;
+	constexpr float sigmaDelta = DEG2RAD(360) / l_VertexCircle;
+	constexpr float radius = 1.f;
+	UOC_POSITION_COLOR_VERTEX l_SphereVtxs[verticesCount];
+
+	constexpr auto SphericaltoCartesian = [](float thetaRadians, float sigmaRadians, float radius) ->XMFLOAT3 {
+		return {
+			radius * sin(thetaRadians) * cos(sigmaRadians),
+			radius * cos(thetaRadians) + radius, //add radius to offset the sphere to be fully visible.
+			radius * sin(thetaRadians) * sin(sigmaRadians)
+		};
+	};
+	
+	for (int circle = 0; circle < l_circles; circle++)
+	{
+		auto theta = thetaDelta * (circle);
+		for(int vertice = 0; vertice < l_VertexCircle; vertice++)
+		{
+			auto sigma = sigmaDelta * vertice;
+
+			auto originalPos = SphericaltoCartesian(theta, sigma, radius);
+			auto nextXZpos = SphericaltoCartesian(theta, sigma + sigmaDelta, radius);
+			auto nextXYpos = SphericaltoCartesian(theta + thetaDelta, sigma, radius);
+			
+
+			auto arrayIndex = circle * l_VertexCircle * 4 + vertice *4;
+			assert(arrayIndex + 3 < verticesCount);
+
+			l_SphereVtxs[arrayIndex] = { originalPos, WHITE };
+			l_SphereVtxs[arrayIndex+1] = { nextXZpos, WHITE };
+
+			l_SphereVtxs[arrayIndex +2] = { originalPos, WHITE };
+			l_SphereVtxs[arrayIndex +3] = { nextXYpos, WHITE };
+
+		}
+	}
+
+	m_SphereRenderableVertexs = new CLinesListRenderableVertexs<UOC_POSITION_COLOR_VERTEX>(Device, l_SphereVtxs, verticesCount, verticesCount / 2);
 }
 
 CDebugRender::~CDebugRender()
 {
-	//TO DO : Destruir la variable miembro m_AxisRenderableVertexs utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_GridRenderableVertexs utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_CubeRenderableVertexs utilizando la macro CHECKED_DELETE
-	//TO DO : Destruir la variable miembro m_SphereRenderableVertexs utilizando la macro CHECKED_DELETE
+	CHECKED_DELETE(m_AxisRenderableVertexs);
+	CHECKED_DELETE(m_GridRenderableVertexs);
+	CHECKED_DELETE(m_CubeRenderableVertexs);
+	CHECKED_DELETE(m_SphereRenderableVertexs);
 }
 
 
-void CDebugRender::DrawAxis(ID3D11DeviceContext *DeviceContext, float Size)
+void CDebugRender::DrawAxis(ID3D11DeviceContext* DeviceContext, float Size)
 {
-	//TO DO : Establecer el color blanco (XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)) en la variable miembro m_BaseColor que se encuentra en la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager
-	//TO DO : Establecer el tamaño según el Size en la variable miembro m_DebugRenderScale que se encuentra en la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager
-	//TO DO : Llamar al método SetObjectConstantBuffer para establecer las constantes del objeto en el shader que se encuentra en el EffectManager del motor
-	//TO DO : Pintar los ejes utilizando el método Draw de la instancia m_AxisRenderableVertexs utilizando el CEffect m_Effect
+	auto effectManager = CUOCEngine::GetEngine()->GetEffectManager();
+	assert(effectManager);
+	auto& bufferParameters = CUOCEngine::GetEngine()->GetEffectManager()->m_ObjectConstantBufferParameters;
+	bufferParameters.m_BaseColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	bufferParameters.m_DebugRenderScale = XMFLOAT4(Size, Size, Size, Size);
+	effectManager->SetObjectConstantBuffer(DeviceContext);
+	m_AxisRenderableVertexs->Draw(DeviceContext, m_Effect);
 }
 
-void CDebugRender::DrawGrid(ID3D11DeviceContext *DeviceContext, float Size, XMFLOAT4 Color)
+void CDebugRender::DrawGrid(ID3D11DeviceContext* DeviceContext, float Size, XMFLOAT4 Color)
 {
-	//TO DO : Establecer el color en la variable miembro m_BaseColor que se encuentra en la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager
-	//TO DO : Establecer el tamaño según el Size en la variable miembro m_DebugRenderScale que se encuentra en la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager
-	//TO DO : Llamar al método SetObjectConstantBuffer para establecer las constantes del objeto en el shader que se encuentra en el EffectManager del motor
-	//TO DO : Pintar la grid utilizando el método Draw de la instancia m_GridRenderableVertexs utilizando el CEffect m_Effect
+	auto effectManager = CUOCEngine::GetEngine()->GetEffectManager();
+	assert(effectManager);
+	auto& bufferParameters = CUOCEngine::GetEngine()->GetEffectManager()->m_ObjectConstantBufferParameters;
+	bufferParameters.m_BaseColor = Color;
+	bufferParameters.m_DebugRenderScale = XMFLOAT4(Size, Size, Size, Size);
+	effectManager->SetObjectConstantBuffer(DeviceContext);
+	m_GridRenderableVertexs->Draw(DeviceContext, m_Effect);
 }
 
-void CDebugRender::DrawCube(ID3D11DeviceContext *DeviceContext, float Size, XMFLOAT4 Color)
+void CDebugRender::DrawCube(ID3D11DeviceContext* DeviceContext, float Size, XMFLOAT4 Color)
 {
-	//TO DO : Establecer el color en la variable miembro m_BaseColor que se encuentra en la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager
-	//TO DO : Establecer el tamaño según el Size en la variable miembro m_DebugRenderScale que se encuentra en la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager
-	//TO DO : Llamar al método SetObjectConstantBuffer para establecer las constantes del objeto en el shader que se encuentra en el EffectManager del motor
-	//TO DO : Pintar el cubo utilizando el método Draw de la instancia m_CubeRenderableVertexs utilizando el CEffect m_Effect
+	auto effectManager = CUOCEngine::GetEngine()->GetEffectManager();
+	assert(effectManager);
+	auto& bufferParameters = CUOCEngine::GetEngine()->GetEffectManager()->m_ObjectConstantBufferParameters;
+	bufferParameters.m_BaseColor = Color;
+	bufferParameters.m_DebugRenderScale = XMFLOAT4(Size, Size, Size, Size);
+	effectManager->SetObjectConstantBuffer(DeviceContext);
+	m_CubeRenderableVertexs->Draw(DeviceContext, m_Effect);
 }
 
-void CDebugRender::DrawSphere(ID3D11DeviceContext *DeviceContext, float Radius, XMFLOAT4 Color)
+void CDebugRender::DrawSphere(ID3D11DeviceContext* DeviceContext, float Radius, XMFLOAT4 Color)
 {
-	//TO DO : Establecer el color en la variable miembro m_BaseColor que se encuentra en la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager
-	//TO DO : Establecer el tamaño según el Radius en la variable miembro m_DebugRenderScale que se encuentra en la variable miembro estática m_ObjectConstantBufferParameters de la clase CEffectManager
-	//TO DO : Llamar al método SetObjectConstantBuffer para establecer las constantes del objeto en el shader que se encuentra en el EffectManager del motor
-	//TO DO : Pintar la esfera utilizando el método Draw de la instancia m_SphereRenderableVertexs utilizando el CEffect m_Effect
+	auto effectManager = CUOCEngine::GetEngine()->GetEffectManager();
+	assert(effectManager);
+	auto& bufferParameters = CUOCEngine::GetEngine()->GetEffectManager()->m_ObjectConstantBufferParameters;
+	bufferParameters.m_BaseColor = Color;
+	bufferParameters.m_DebugRenderScale = XMFLOAT4(Radius, Radius, Radius, Radius);
+	effectManager->SetObjectConstantBuffer(DeviceContext);
+	m_SphereRenderableVertexs->Draw(DeviceContext, m_Effect);
 }

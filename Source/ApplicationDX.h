@@ -1,23 +1,25 @@
 #ifndef _APPLICATION_DX_H
 #define _APPLICATION_DX_H
 
-#include "defines.h"
 
-class CPlayer;
+#include "defines.h"
+#include <memory>
+#include "Player.h"
+
 
 class CApplicationDX
 {
 private:
-	CPlayer 				*m_Player;
-public:	
-	CApplicationDX();
+	std::unique_ptr<CPlayer> m_Player;
+public:
+	CApplicationDX() = default;
 	~CApplicationDX();
-	
+
 	LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	void Init(HWND hWnd, int Width, int Height);
 	void Update();
 	void Render();
-	CPlayer * GetPlayer() const {return m_Player;}
+	CPlayer* GetPlayer() const;
 };
 
 #endif

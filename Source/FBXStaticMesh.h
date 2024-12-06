@@ -8,6 +8,7 @@
 #include <DirectXMath.h>
 #include "defines.h"
 #include <fbxsdk.h>
+#include <memory>
 
 class CTexture;
 class CRenderableVertexs;
@@ -17,7 +18,7 @@ class CFBXStaticMesh
 {
 private:
 	CEffect									*m_Effect;
-	std::vector<CRenderableVertexs *>		m_RenderableVertexs;
+	std::vector<std::unique_ptr<CRenderableVertexs>>		m_RenderableVertexs;
 	std::vector<CTexture *>					m_Textures;
 	XMFLOAT3								m_Position, m_BBMin, m_BBMax;
 	float									m_Radius;

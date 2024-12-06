@@ -10,6 +10,8 @@ private:
 	char								m_Diks[256];
 	LPDIRECTINPUT8						m_DI;
 	LPDIRECTINPUTDEVICE8				m_Keyboard;
+private:
+	bool WasKeyPressed(int KeyCode);
 public:
 	CKeyboardInput(HWND hWnd);
 	virtual ~CKeyboardInput();
